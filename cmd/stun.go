@@ -1,14 +1,12 @@
 package cmd
 
 import (
-	"fmt"
-	"sync"
+	"net"
 
 	"github.com/pion/stun"
 )
 
-func GetIP(wg *sync.WaitGroup) {
-	defer wg.Done()
+func GetIP() net.IP {
 	u, err := stun.ParseURI("stun:stun.l.google.com:19302")
 	if err != nil {
 		panic(err)
@@ -19,6 +17,7 @@ func GetIP(wg *sync.WaitGroup) {
 		panic(err)
 	}
 	message := stun.MustBuild(stun.TransactionID, stun.BindingRequest)
+	var ip net.IP
 	if err := c.Do(message, func(res stun.Event) {
 		if res.Error != nil {
 			panic(res.Error)
@@ -27,8 +26,9 @@ func GetIP(wg *sync.WaitGroup) {
 		if err := xorAddr.GetFrom(res.Message); err != nil {
 			panic(err)
 		}
-		fmt.Println("your IP is", xorAddr.IP)
+		ip = xorAddr.IP
 	}); err != nil {
 		panic(err)
 	}
+	return ip
 }
