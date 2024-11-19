@@ -9,7 +9,7 @@ import (
 
 type Tracker struct {
 	mu    sync.Mutex
-	Table map[string]map[string]string // filename -> peerIP -> status
+	Table map[string]map[string]string // filename -> peerIP+port ("119.82.83.111:9090") -> status
 }
 
 var tracker = Tracker{
@@ -22,7 +22,7 @@ func main() {
 	http.HandleFunc("/delete", deleteHandler)
 
 	fmt.Println("Server listening on port 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe("0.0.0.0:8080", nil); err != nil {
 		fmt.Println("Error starting server:", err)
 	}
 }

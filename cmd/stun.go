@@ -6,7 +6,7 @@ import (
 	"github.com/pion/stun"
 )
 
-func GetIP() net.IP {
+func GetIP() (net.IP, int) {
 	u, err := stun.ParseURI("stun:stun.l.google.com:19302")
 	if err != nil {
 		panic(err)
@@ -18,6 +18,7 @@ func GetIP() net.IP {
 	}
 	message := stun.MustBuild(stun.TransactionID, stun.BindingRequest)
 	var ip net.IP
+	var port int
 	if err := c.Do(message, func(res stun.Event) {
 		if res.Error != nil {
 			panic(res.Error)
@@ -27,8 +28,9 @@ func GetIP() net.IP {
 			panic(err)
 		}
 		ip = xorAddr.IP
+		port = xorAddr.Port
 	}); err != nil {
 		panic(err)
 	}
-	return ip
+	return ip, port
 }

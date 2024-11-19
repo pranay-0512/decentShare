@@ -9,17 +9,19 @@ import (
 	"p2p/config"
 	"p2p/connection"
 	"p2p/model"
+	"strconv"
 )
 
 var GlobalHashTable model.Tracker
 
 func main() {
 	config.LoadConfig()
-	ip := cmd.GetIP()
+	ip, port := cmd.GetIP()
 	fmt.Println("Public IP: ", ip)
+	fmt.Println("Public PORT: ", port)
 
 	fileName := "file1.txt"
-	res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, ip.String()))))
+	res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, (ip.String()+":"+strconv.Itoa(port))))))
 	if err != nil {
 		fmt.Println("Error posting to tracker", err)
 	}
