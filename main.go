@@ -1,15 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"net/http"
+	"net"
 	"p2p/cmd"
 	"p2p/config"
-	"p2p/connection"
 	"p2p/model"
-	"strconv"
 )
 
 var GlobalHashTable model.Tracker
@@ -20,15 +16,29 @@ func main() {
 	fmt.Println("Public IP: ", ip)
 	fmt.Println("Public PORT: ", port)
 
-	fileName := "file1.txt"
-	res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, (ip.String()+":"+strconv.Itoa(port))))))
-	if err != nil {
-		fmt.Println("Error posting to tracker", err)
-	}
-	body, _ := io.ReadAll(res.Body)
-	fmt.Printf("Response from POST: %s\n", string(body))
+	// fileName := "file1.txt"
+	// res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, (ip.String()+":"+strconv.Itoa(port))))))
+	// if err != nil {
+	// 	fmt.Println("Error posting to tracker", err)
+	// }
+	// body, _ := io.ReadAll(res.Body)
+	// fmt.Printf("Response from POST: %s\n", string(body))
 
-	connection.StartTCPconnection()
+	conn, err := net.Dial("udp", "115.245.205.158:53812")
+	if err != nil {
+		fmt.Println("Error connecting to peer:", err)
+		panic(err)
+	}
+	fmt.Println("Sent connection request to peer")
+	defer conn.Close() // Ensure the connection is closed when done
+
+	// Write a message to the connected server
+	_, err = conn.Write([]byte("Hello from peer"))
+	if err != nil {
+		fmt.Println("Error writing to connection:", err)
+		panic(err)
+	}
+	// connection.StartTCPconnection()
 
 	// when main function is called (the entry point),
 	// it means the user wants to become a peer
