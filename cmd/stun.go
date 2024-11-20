@@ -1,5 +1,7 @@
 package cmd
 
+import "net"
+
 // func GetIP() (net.IP, int) {
 // 	u, err := stun.ParseURI("stun:stun.l.google.com:19302")
 // 	if err != nil {
@@ -29,7 +31,7 @@ package cmd
 // 	return ip, port
 // }
 
-func GetIP() {
+func GetIP() (ip net.IP, i int) {
 	// use turn server to get public ip
-	
+	return ip, i
 }
