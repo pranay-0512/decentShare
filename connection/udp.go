@@ -8,7 +8,7 @@ import (
 func Udp() {
 	addr := net.UDPAddr{
 		Port: 12345,
-		IP:   net.ParseIP("0.0.0.0"),
+		IP:   net.ParseIP("180.151.192.116"),
 	}
 	conn, err := net.ListenUDP("udp", &addr)
 	if err != nil {

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
-	"p2p/cmd"
 	"p2p/config"
 	"p2p/model"
 )
@@ -12,131 +12,59 @@ var GlobalHashTable model.Tracker
 
 func main() {
 	config.LoadConfig()
-	ip, port := cmd.GetIP()
-	fmt.Println("Public IP: ", ip)
-	fmt.Println("Public PORT: ", port)
-	// completeIP := ip.String() + ":" + strconv.Itoa(port)
-	// connection.StartTCPconnection()
-	// connection.Udp()
-	// fileName := "file1.txt"
-	// res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, (ip.String()+":"+strconv.Itoa(port))))))
-	// if err != nil {
-	// 	fmt.Println("Error posting to tracker", err)
-	// }
-	// body, _ := io.ReadAll(res.Body)
-	// fmt.Printf("Response from POST: %s\n", string(body))
+	// ip, port := cmd.GetIP()
+	// fmt.Println("Public IP: ", ip)
+	// fmt.Println("Public PORT: ", port)
 
-	// conn, err := net.Dial("tcp", "180.151.192.116:62720")
-	// if err != nil {
-	// 	fmt.Println("Error connecting to peer:", err)
-	// 	panic(err)
-	// }
-	// fmt.Println("Sent connection request to peer")
-	// defer conn.Close() // Ensure the connection is closed when done
-
-	// // Write a message to the connected server
-	// _, err = conn.Write([]byte("Hello from peer"))
-	// if err != nil {
-	// 	fmt.Println("Error writing to connection:", err)
-	// 	panic(err)
-	// }
-	// fmt.Println("Sent message to peer")
-
-	serverAddr := net.UDPAddr{
-		Port: 62718,
-		IP:   net.ParseIP("180.151.192.116"),
-	}
-
-	// Create a UDP connection
-	conn, err := net.DialUDP("udp", nil, &serverAddr)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	defer conn.Close()
-
-	// Send a message
-	message := []byte("Hello, UDP Server!")
-	_, err = conn.Write(message)
-	if err != nil {
-		fmt.Println("Error writing to server:", err)
-		return
-	}
-	fmt.Println("Message sent to server")
-
-	// Optionally, receive a response
-	buf := make([]byte, 1024)
-	n, addr, err := conn.ReadFromUDP(buf)
-	if err != nil {
-		fmt.Println("Error reading response:", err)
-		return
-	}
-	fmt.Printf("Received response from server (%s): %s\n", addr, string(buf[:n]))
-
-	// when main function is called (the entry point),
-	// it means the user wants to become a peer
-	// meaning it will either be a leecher or a seeder
-	// user can select which file it needs to seed (seeder state)
-	// user will get a list of files that he can leech (leecher state)
-
-	// once he selects the file to either seed or leech, he will talk to DHT to find out the kv store of that file.
-	// meaning he will have the public ips of all the peers already in the peer pool.
-	// the choking algorithm will come into play and he will be randomly unchoked.
-	// before unchoking the user, a peer will setup a TCP connection with the user.
-	// Then he will send a random piece of file to the user.
-	// The connection will not close untill all the pieces are trasnfered. //TODO - maybe the connection will only end if a peer abruptly leaves.
-	// Connection will not be closed further.
-	// A peer can handle more than 20000 TCP connections (both idle and active) at once.
-	// The open connection will help in sending have messages and bitfields
-	//
+	StartTCPconnection()
+	// DialTCP()
 }
 
-/*
-Implementation Steps:
+func StartTCPconnection() {
+	listener, err := net.Listen("tcp", ":5656")
+	if err != nil {
+		log.Println("error listening to tcp connection", err)
+	}
+	defer listener.Close()
+	fmt.Println("Listening on port: 5656")
+	for {
+		fmt.Println("Waiting for a connnection to accept")
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Println("error listening to tcp connection", err)
+		}
+		fmt.Println("Connecion established!")
+		buffer := make([]byte, 1024)
+		n, err := conn.Read(buffer)
+		if err != nil {
+			log.Println("Error reading from connection:", err)
+			continue
+		}
+		fmt.Printf("Received: %s\n", string(buffer[:n]))
 
-	Basic Network Layer:
-		Implement TCP connections
-		Handle peer discovery - Trackers for now
-		Basic message protocol
+		_, err = conn.Write([]byte("cool got it"))
+		if err != nil {
+			log.Println("Error writing to connection:", err)
+			continue
+		}
+	}
+}
 
-	Peer Management:
-		Track connected peers
-		Implement choking algorithm
-		Handle peer states
+func DialTCP() {
+	conn, err := net.Dial("tcp", "192.168.29.235:5656")
+	if err != nil {
+		fmt.Println("Error connection to peer: ", err)
+		panic(err)
+	}
 
-	Piece Management:
-		Split files into pieces
-		Track piece availability
-		Implement piece selection
+	fmt.Println("Sent connection req to listening peer")
 
-	Data Transfer:
-		Request/response protocol
-		Block-level transfer
-		Verify data integrity
+	_, err = conn.Write([]byte("Hello from a peer in same network"))
+	if err != nil {
+		fmt.Println("Error writing to peer: ", err)
+		panic(err)
+	}
 
-	DHT Implementation:
-		Node ID generation
-		K-bucket management
-		Implement RPCs
-		Routing table maintenance
-
-	Tracker Integration:
-		Implement tracker protocol
-		Handle peer lists
-		Periodic updates
-
-	File Management:
-		Torrent file parsing
-		File writing/reading
-		Progress tracking
-
-	Optimization:
-		Implement endgame mode
-		Optimize piece selection
-		Fine-tune parameters
-
-	Additional Features:
-		Resume capability
-		Bandwidth management
-		Stats tracking
-*/
+	fmt.Println("Sent message to peer")
+	defer conn.Close()
+}
