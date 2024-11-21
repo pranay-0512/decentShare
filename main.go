@@ -15,7 +15,9 @@ func main() {
 	ip, port := cmd.GetIP()
 	fmt.Println("Public IP: ", ip)
 	fmt.Println("Public PORT: ", port)
-
+	// completeIP := ip.String() + ":" + strconv.Itoa(port)
+	// connection.StartTCPconnection()
+	// connection.Udp()
 	// fileName := "file1.txt"
 	// res, err := http.Post("http://localhost:8080/post", "application/json", bytes.NewBuffer([]byte(fmt.Sprintf(`{"filename": "%s", "peer_ip": "%s"}`, fileName, (ip.String()+":"+strconv.Itoa(port))))))
 	// if err != nil {
@@ -24,21 +26,52 @@ func main() {
 	// body, _ := io.ReadAll(res.Body)
 	// fmt.Printf("Response from POST: %s\n", string(body))
 
-	conn, err := net.Dial("udp", "115.245.205.158:53812")
-	if err != nil {
-		fmt.Println("Error connecting to peer:", err)
-		panic(err)
-	}
-	fmt.Println("Sent connection request to peer")
-	defer conn.Close() // Ensure the connection is closed when done
+	// conn, err := net.Dial("tcp", "180.151.192.116:62720")
+	// if err != nil {
+	// 	fmt.Println("Error connecting to peer:", err)
+	// 	panic(err)
+	// }
+	// fmt.Println("Sent connection request to peer")
+	// defer conn.Close() // Ensure the connection is closed when done
 
-	// Write a message to the connected server
-	_, err = conn.Write([]byte("Hello from peer"))
-	if err != nil {
-		fmt.Println("Error writing to connection:", err)
-		panic(err)
+	// // Write a message to the connected server
+	// _, err = conn.Write([]byte("Hello from peer"))
+	// if err != nil {
+	// 	fmt.Println("Error writing to connection:", err)
+	// 	panic(err)
+	// }
+	// fmt.Println("Sent message to peer")
+
+	serverAddr := net.UDPAddr{
+		Port: 62718,
+		IP:   net.ParseIP("180.151.192.116"),
 	}
-	// connection.StartTCPconnection()
+
+	// Create a UDP connection
+	conn, err := net.DialUDP("udp", nil, &serverAddr)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer conn.Close()
+
+	// Send a message
+	message := []byte("Hello, UDP Server!")
+	_, err = conn.Write(message)
+	if err != nil {
+		fmt.Println("Error writing to server:", err)
+		return
+	}
+	fmt.Println("Message sent to server")
+
+	// Optionally, receive a response
+	buf := make([]byte, 1024)
+	n, addr, err := conn.ReadFromUDP(buf)
+	if err != nil {
+		fmt.Println("Error reading response:", err)
+		return
+	}
+	fmt.Printf("Received response from server (%s): %s\n", addr, string(buf[:n]))
 
 	// when main function is called (the entry point),
 	// it means the user wants to become a peer

@@ -19,7 +19,6 @@ func StartTCPconnection() {
 		if err != nil {
 			log.Println("error listening to tcp connection", err)
 		}
-		defer conn.Close()
 		fmt.Println("Connecion established!")
 		buffer := make([]byte, 1024)
 		n, err := conn.Read(buffer)
