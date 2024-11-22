@@ -1,0 +1,1634 @@
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+
+# 2 month Goal Till JAN’25
+
+Follow this to become job guaranteed
+
+## Make 3 good projects: And Deploy them
+
+1. decentShare - P2P file sharing (using DHT) - Deadline 30.11.2024
+2. uniChat - Chat application in Go
+3. [Budd.AI](http://Budd.AI) - RAG using Python and Go
+4. OpinX - Opinions trading app
+
+> Each project is approx. 20 days long. Deploy both the frontend and backend part
+> 
+
+## Work on fundamentals
+
+1. Write a basic crud app + ws in Golang. Understand how it works. You should even be able to write this code in sleep. 
+2. Learn SQL.  Write sql queries.
+3. Use of ORMs in go
+4. How does Redis work
+5. How does p2p networks work 
+6. Learn about nginx
+
+## Watch golang interviews
+
+1. What all common questions are asked in the interview.
+2. Some system design rounds.
+3. Shine in handling concurrency and race conditions
+
+## Notes
+
+1. Aim for $30k-$40k for your first job.
+2. Contribute to open source whenever and wherever possible
+3. Spend most of the time in Office. That’s where you learn things
+
+
+
+

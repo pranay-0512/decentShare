@@ -2,12 +2,13 @@ package connection
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"p2p/file"
 )
 
-var filename = "/main.text"
+var filename = "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/main.txt"
 
 func StartTCPconnection() {
 	listener, err := net.Listen("tcp", ":5555")
@@ -45,12 +46,35 @@ func DialTCP() {
 
 	fmt.Println("Sent connection req to listening peer")
 
-	_, err = conn.Write([]byte("Hello from a peer in same network"))
-	if err != nil {
-		fmt.Println("Error writing to peer: ", err)
-		panic(err)
+	var chunks [][]byte
+	buf := make([]byte, file.ChunkSize)
+
+	for {
+		bytesRead, err := conn.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("All chunks received")
+				break
+			}
+			log.Println("Error reading from connection: ", err)
+			return
+		}
+
+		// Store the received chunk
+		chunk := make([]byte, bytesRead)
+		copy(chunk, buf[:bytesRead])
+		chunks = append(chunks, chunk)
+
+		fmt.Printf("Received chunk of size %d bytes\n", bytesRead)
 	}
 
-	fmt.Println("Sent message to peer")
 	defer conn.Close()
+	outputFile := "received_file.txt" // Destination file name
+	err = file.Merge(outputFile, chunks)
+	if err != nil {
+		log.Println("Error merging chunks into file: ", err)
+		return
+	}
+
+	fmt.Println("File successfully reconstructed as:", outputFile)
 }

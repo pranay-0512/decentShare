@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const chunkSize = 10240 // 10 KB chunks
+const ChunkSize = 10240 // 10 KB chunks
 
 // check if the given file path is valid and accessible
 func validator(filepath string) error {
@@ -46,7 +46,7 @@ func Chunkify(filename string) ([][]byte, error) {
 	defer file.Close()
 
 	var chunks [][]byte
-	buf := make([]byte, chunkSize)
+	buf := make([]byte, ChunkSize)
 
 	for {
 		bytesRead, err := file.Read(buf)
