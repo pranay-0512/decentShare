@@ -4,34 +4,34 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"p2p/file"
 )
+
+var filename = "/main.text"
 
 func StartTCPconnection() {
 	listener, err := net.Listen("tcp", ":5555")
 	if err != nil {
 		log.Println("error listening to tcp connection", err)
+		return
 	}
 	defer listener.Close()
-	fmt.Println("Listening on port: 5555")
 	for {
-		fmt.Println("Waiting for a connnection to accept")
 		conn, err := listener.Accept()
 		if err != nil {
 			log.Println("error listening to tcp connection", err)
 		}
-		fmt.Println("Connecion established!")
-		buffer := make([]byte, 1024)
-		n, err := conn.Read(buffer)
+		chunks, err := file.Chunkify(filename)
 		if err != nil {
-			log.Println("Error reading from connection:", err)
-			continue
+			log.Println("cannot chunkify: ", err)
 		}
-		fmt.Printf("Received: %s\n", string(buffer[:n]))
-
-		_, err = conn.Write([]byte("cool got it"))
-		if err != nil {
-			log.Println("Error writing to connection:", err)
-			continue
+		for _, chunk := range chunks {
+			_, err := conn.Write(chunk)
+			fmt.Println("writing this chunk: ", chunk)
+			if err != nil {
+				log.Println("cannot write the chunks to connection:", err)
+			}
+			defer conn.Close()
 		}
 	}
 }
