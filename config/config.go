@@ -1,25 +1,31 @@
 package config
 
 import (
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
+	"path/filepath"
 )
 
-type Config struct {
-	MONGO_CONNECTION_URL string
+type NetworkConfig struct {
+	Host      string
+	Port      string
+	ChunkSize int
 }
 
-var AppConfig Config
+type FileConfig struct {
+	BaseDirectory string
+}
 
-func LoadConfig() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("error loading from .env")
+func DefaultNetworkConfig() NetworkConfig {
+	return NetworkConfig{
+		Host:      "0.0.0.0",
+		Port:      "5555",
+		ChunkSize: 256 * 1024, // 256 KB
 	}
-	AppConfig = Config{
-		MONGO_CONNECTION_URL: os.Getenv("MONGO_CONNECTION_URL"),
+}
+
+func DefaultFileConfig() FileConfig {
+	homeDir, _ := os.UserHomeDir()
+	return FileConfig{
+		BaseDirectory: filepath.Join(homeDir, "p2p-transfers"),
 	}
-	log.Println("Configuration loaded.")
 }

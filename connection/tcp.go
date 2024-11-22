@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
 	"p2p/file"
 	"time"
 )
@@ -103,4 +104,3 @@ func DialTCP() {
 
 	log.Printf("File successfully reconstructed as: %s", outputFile)
 }
-
