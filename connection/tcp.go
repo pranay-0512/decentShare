@@ -35,3 +35,22 @@ func StartTCPconnection() {
 		}
 	}
 }
+
+func DialTCP() {
+	conn, err := net.Dial("tcp", "122.161.53.161:3514")
+	if err != nil {
+		fmt.Println("Error connection to peer: ", err)
+		panic(err)
+	}
+
+	fmt.Println("Sent connection req to listening peer")
+
+	_, err = conn.Write([]byte("Hello from a peer in same network"))
+	if err != nil {
+		fmt.Println("Error writing to peer: ", err)
+		panic(err)
+	}
+
+	fmt.Println("Sent message to peer")
+	defer conn.Close()
+}
