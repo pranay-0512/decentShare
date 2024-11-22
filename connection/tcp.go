@@ -87,6 +87,14 @@ func DialTCP() {
 	log.Printf("File transfer completed in %v", duration)
 
 	outputFile := "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/received_file.txt"
+
+	// Ensure the output file is created if not present
+	outputFileHandle, err := os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatalf("Error creating or opening output file: %v", err)
+	}
+	outputFileHandle.Close() // Close immediately, as we will write during merging
+
 	err = file.Merge(outputFile, chunks)
 	if err != nil {
 		log.Printf("Error merging file: %v", err)
@@ -95,3 +103,4 @@ func DialTCP() {
 
 	log.Printf("File successfully reconstructed as: %s", outputFile)
 }
+
