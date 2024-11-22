@@ -37,7 +37,7 @@ func StartTCPconnection() {
 }
 
 func DialTCP() {
-	conn, err := net.Dial("tcp", "122.161.53.161:3514")
+	conn, err := net.Dial("tcp", "192.168.1.166:5555")
 	if err != nil {
 		fmt.Println("Error connection to peer: ", err)
 		panic(err)
