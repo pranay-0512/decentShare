@@ -1,87 +1,97 @@
 package connection
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net"
-	"os"
 	"p2p/file"
+	"time"
 )
 
 var filename = "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/main.txt"
 
-func StartTCPconnection() {
+// StartTCPConnection sets up a TCP server to send file chunks
+func StartTCPConnection() {
 	listener, err := net.Listen("tcp", ":5555")
 	if err != nil {
-		log.Println("error listening to tcp connection", err)
-		return
+		log.Fatalf("Error setting up TCP listener: %v", err)
 	}
 	defer listener.Close()
+
+	log.Println("Server listening on :5555")
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Println("error listening to tcp connection", err)
+			log.Printf("Error accepting connection: %v", err)
+			continue
 		}
-		chunks, err := file.Chunkify(filename)
-		if err != nil {
-			log.Println("cannot chunkify: ", err)
-		}
-		for _, chunk := range chunks {
-			_, err := conn.Write(chunk)
-			fmt.Println("writing this chunk: ", chunk)
-			if err != nil {
-				log.Println("cannot write the chunks to connection:", err)
-			}
-			defer conn.Close()
-		}
+		go handleConnection(conn)
 	}
 }
 
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
+	log.Printf("Connection established with %s", conn.RemoteAddr())
+
+	chunks, err := file.Chunkify(filename)
+	if err != nil {
+		log.Printf("Error chunkifying file: %v", err)
+		return
+	}
+
+	start := time.Now()
+	for i, chunk := range chunks {
+		n, err := conn.Write(chunk)
+		if err != nil {
+			log.Printf("Error sending chunk %d: %v", i, err)
+			return
+		}
+		log.Printf("Sent chunk %d of size %d bytes", i, n)
+	}
+	duration := time.Since(start)
+	log.Printf("File transfer completed in %v", duration)
+}
+
+// DialTCP sets up a TCP client to receive file chunks
 func DialTCP() {
 	conn, err := net.Dial("tcp", "192.168.1.166:5555")
 	if err != nil {
-		fmt.Println("Error connection to peer: ", err)
-		panic(err)
+		log.Fatalf("Error connecting to server: %v", err)
 	}
+	defer conn.Close()
 
-	fmt.Println("Sent connection req to listening peer")
+	log.Println("Connected to server")
 
 	var chunks [][]byte
 	buf := make([]byte, file.ChunkSize)
+	start := time.Now()
 
 	for {
 		bytesRead, err := conn.Read(buf)
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("All chunks received")
+				log.Println("All chunks received")
 				break
 			}
-			log.Println("Error reading from connection: ", err)
+			log.Printf("Error reading from connection: %v", err)
 			return
 		}
 
-		// Store the received chunk
 		chunk := make([]byte, bytesRead)
 		copy(chunk, buf[:bytesRead])
 		chunks = append(chunks, chunk)
-
-		fmt.Printf("Received chunk of size %d bytes\n", bytesRead)
+		log.Printf("Received chunk of size %d bytes", bytesRead)
 	}
+	duration := time.Since(start)
+	log.Printf("File transfer completed in %v", duration)
 
-	defer conn.Close()
-	outputFile := "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/received_file.txt" // Destination file name
-	_, err = os.Create(outputFile)
-	err = file.Validator(outputFile)
-	if err != nil {
-		fmt.Println("cannot find dst file")
-		return
-	}
+	outputFile := "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/received_file.txt"
 	err = file.Merge(outputFile, chunks)
 	if err != nil {
-		log.Println("Error merging chunks into file: ", err)
+		log.Printf("Error merging file: %v", err)
 		return
 	}
 
-	fmt.Println("File successfully reconstructed as:", outputFile)
+	log.Printf("File successfully reconstructed as: %s", outputFile)
 }

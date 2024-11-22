@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
-const ChunkSize = 10240 // 10 KB chunks
+const ChunkSize = 256000 // 256 KB chunks
 
 // check if the given file path is valid and accessible
 func Validator(filepath string) error {
@@ -33,7 +34,7 @@ func Validator(filepath string) error {
 	return nil
 }
 
-// read the file and break it into chunks
+// Read the file and break it into chunks
 func Chunkify(filename string) ([][]byte, error) {
 	if err := Validator(filename); err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func Chunkify(filename string) ([][]byte, error) {
 	return chunks, nil
 }
 
-// reconstruct the original file from chunks
+// Reconstruct the original file from chunks
 func Merge(filename string, chunks [][]byte) error {
 	outFile, err := os.Create(filename)
 	if err != nil {
@@ -73,12 +74,15 @@ func Merge(filename string, chunks [][]byte) error {
 	}
 	defer outFile.Close()
 
-	for _, chunk := range chunks {
+	start := time.Now()
+	for i, chunk := range chunks {
 		_, err := outFile.Write(chunk)
 		if err != nil {
-			return fmt.Errorf("failed to write chunk: %v", err)
+			return fmt.Errorf("failed to write chunk at index %d: %v", i, err)
 		}
 	}
+	duration := time.Since(start)
+	fmt.Printf("File merge completed in %v\n", duration)
 
 	return nil
 }
