@@ -10,7 +10,7 @@ import (
 const ChunkSize = 10240 // 10 KB chunks
 
 // check if the given file path is valid and accessible
-func validator(filepath string) error {
+func Validator(filepath string) error {
 	if filepath == "" {
 		return errors.New("filepath cannot be empty")
 	}
@@ -35,7 +35,7 @@ func validator(filepath string) error {
 
 // read the file and break it into chunks
 func Chunkify(filename string) ([][]byte, error) {
-	if err := validator(filename); err != nil {
+	if err := Validator(filename); err != nil {
 		return nil, err
 	}
 

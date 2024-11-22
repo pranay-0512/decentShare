@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
 	"p2p/file"
 )
 
@@ -69,7 +70,13 @@ func DialTCP() {
 	}
 
 	defer conn.Close()
-	outputFile := "received_file.txt" // Destination file name
+	outputFile := "C:/Users/linkp/OneDrive/Desktop/decentShare/connection/received_file.txt" // Destination file name
+	_, err = os.Create(outputFile)
+	err = file.Validator(outputFile)
+	if err != nil {
+		fmt.Println("cannot find dst file")
+		return
+	}
 	err = file.Merge(outputFile, chunks)
 	if err != nil {
 		log.Println("Error merging chunks into file: ", err)
