@@ -2,7 +2,6 @@ package network
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"sync"
@@ -13,26 +12,36 @@ import (
 )
 
 type Peer struct {
-	config      config.NetworkConfig
-	chunker     *file.FileChunker
-	merger      *file.FileMerger
-	mu          sync.Mutex
-	connections map[string]net.Conn
+	config          config.NetworkConfig
+	file            *file.File
+	connections     map[string]net.Conn
+	interestedPeers map[bool]map[string]*Peer
+	bitfield        []bool
+	mu              sync.Mutex
 }
 
-func NewPeer(cfg config.NetworkConfig) *Peer {
+const (
+	MaxInterests     = 20
+	MaxRegularChokes = 3
+	MaxRandomChokes  = 1
+	RunIntervalLeech = 10 * time.Second
+	RunIntervalSeed  = 30 * time.Second
+)
+
+func NewPeer(cfg config.NetworkConfig, file *file.File) *Peer {
 	return &Peer{
-		config:      cfg,
-		chunker:     file.NewFileChunker(cfg.ChunkSize),
-		merger:      file.NewFileMerger(),
-		connections: make(map[string]net.Conn),
+		config:          cfg,
+		file:            file,
+		connections:     make(map[string]net.Conn),
+		interestedPeers: make(map[bool]map[string]*Peer),
+		bitfield:        make([]bool, file.Pieces),
 	}
 }
 
-func (p *Peer) Listen() error {
+func (p *Peer) ListenTCP() error {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", p.config.Host, p.config.Port))
 	if err != nil {
-		return fmt.Errorf("error setting up TCP listener: %v", err)
+		return fmt.Errorf("cannot listen on this port: %v", err)
 	}
 	defer listener.Close()
 
@@ -44,6 +53,7 @@ func (p *Peer) Listen() error {
 			log.Printf("Error accepting connection: %v", err)
 			continue
 		}
+		log.Printf("connected to: %s", conn.RemoteAddr().String())
 		go p.handleIncomingConnection(conn)
 	}
 }
@@ -51,17 +61,13 @@ func (p *Peer) Listen() error {
 func (p *Peer) handleIncomingConnection(conn net.Conn) {
 	defer conn.Close()
 	remoteAddr := conn.RemoteAddr().String()
-	log.Printf("Incoming connection from %s", remoteAddr)
-
 	p.mu.Lock()
 	p.connections[remoteAddr] = conn
 	p.mu.Unlock()
-
-	// Implement your incoming connection logic here
-	// For example, receive file or handle peer discovery
+	fmt.Println("connections of the peer: ", p.connections)
 }
 
-func (p *Peer) DialAndSendFile(targetAddr, filename string) error {
+func (p *Peer) DialTCP(targetAddr string, file file.File) error {
 	conn, err := net.DialTimeout("tcp", targetAddr, 10*time.Second)
 	if err != nil {
 		return fmt.Errorf("failed to connect to %s: %v", targetAddr, err)
@@ -71,68 +77,53 @@ func (p *Peer) DialAndSendFile(targetAddr, filename string) error {
 	p.mu.Lock()
 	p.connections[targetAddr] = conn
 	p.mu.Unlock()
-
-	chunks, err := p.chunker.Chunkify(filename)
-	if err != nil {
-		return fmt.Errorf("failed to chunk file: %v", err)
-	}
-
-	log.Printf("Sending file %s to %s", filename, targetAddr)
-	for i, chunk := range chunks {
-		if _, err := conn.Write(chunk); err != nil {
-			return fmt.Errorf("failed to send chunk %d: %v", i, err)
-		}
-	}
-
+	fmt.Println("connections of the peer: ", p.connections)
 	return nil
 }
 
-func (p *Peer) ReceiveFile(outputFilename string) error {
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", p.config.Host, p.config.Port))
-	if err != nil {
-		return fmt.Errorf("error setting up TCP listener: %v", err)
-	}
-	defer listener.Close()
-
-	log.Printf("Waiting for file transfer on %s:%s", p.config.Host, p.config.Port)
-
-	conn, err := listener.Accept()
-	if err != nil {
-		return fmt.Errorf("error accepting connection: %v", err)
-	}
-	defer conn.Close()
-
-	var chunks [][]byte
-	buf := make([]byte, p.config.ChunkSize)
-
-	for {
-		bytesRead, err := conn.Read(buf)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return fmt.Errorf("error reading chunk: %v", err)
-		}
-
-		chunk := make([]byte, bytesRead)
-		copy(chunk, buf[:bytesRead])
-		chunks = append(chunks, chunk)
+func (p *Peer) SendPiece(targetAddr string, piece []byte) error {
+	conn, ok := p.connections[targetAddr]
+	if !ok {
+		return fmt.Errorf("no connection to %s", targetAddr)
 	}
 
-	if err := p.merger.Merge(outputFilename, chunks); err != nil {
-		return fmt.Errorf("failed to merge received file: %v", err)
+	if _, err := conn.Write(piece); err != nil {
+		return fmt.Errorf("failed to send piece %v", err)
 	}
-
-	log.Printf("File received and saved as %s", outputFilename)
 	return nil
 }
 
-func (p *Peer) CloseAllConnections() {
+func (p *Peer) ReceivePiece(conn net.Conn) ([]byte, error) {
+	buf := make([]byte, p.config.BlockSize)
+	bytesRead, err := conn.Read(buf)
+	if err != nil {
+		return nil, fmt.Errorf("error reading piece: %v", err)
+	}
+
+	piece := make([]byte, bytesRead)
+	copy(piece, buf[:bytesRead])
+	return piece, nil
+}
+
+func (p *Peer) CloseConn() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	for addr, conn := range p.connections {
+	for _, conn := range p.connections {
 		conn.Close()
-		delete(p.connections, addr)
 	}
+}
+
+func (p *Peer) UnchokePeer(peer *Peer) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.interestedPeers[true][peer.config.Host] = peer
+	delete(p.interestedPeers[false], peer.config.Host)
+}
+
+func (p *Peer) ChokePeer(peer *Peer) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.interestedPeers[false][peer.config.Host] = peer
+	delete(p.interestedPeers[true], peer.config.Host)
 }

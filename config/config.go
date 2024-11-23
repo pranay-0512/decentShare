@@ -8,7 +8,7 @@ import (
 type NetworkConfig struct {
 	Host      string
 	Port      string
-	ChunkSize int
+	BlockSize int
 }
 
 type FileConfig struct {
@@ -18,8 +18,8 @@ type FileConfig struct {
 func DefaultNetworkConfig() NetworkConfig {
 	return NetworkConfig{
 		Host:      "0.0.0.0",
-		Port:      "5555",
-		ChunkSize: 256 * 1024, // 256 KB
+		Port:      "52545",
+		BlockSize: 256 * 1024, // 256 KB
 	}
 }
 
