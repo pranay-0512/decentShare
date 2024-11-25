@@ -1,4 +1,3 @@
-// file/file.go
 package file
 
 import (
@@ -23,7 +22,7 @@ const (
 	DefaultDestPath = "C:\\Users\\linkp\\Downloads\\"
 )
 
-func (f *File) Size() (int64, error) {
+func (f *File) size() (int64, error) {
 	fi, err := os.Stat(f.FilePath)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get file stats: %w", err)
@@ -31,7 +30,7 @@ func (f *File) Size() (int64, error) {
 	return fi.Size(), nil
 }
 
-func (f *File) PieceCount() int {
+func (f *File) pieceCount() int {
 	pieces := f.FileSize / PieceSize
 	if f.FileSize%PieceSize != 0 {
 		pieces++
@@ -50,14 +49,14 @@ func NewFile(filePath string) (*File, error) {
 		FileName: filepath.Base(absPath),
 	}
 
-	size, err := file.Size()
+	size, err := file.size()
 	if err != nil {
 		return nil, err
 	}
 	file.FileSize = size
-	file.Pieces = file.PieceCount()
+	file.Pieces = file.pieceCount()
 
-	hash, err := calculateFileHash(absPath)
+	hash, err := calculateFileHash(file)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate file hash: %w", err)
 	}
@@ -77,7 +76,7 @@ func (f *File) Chunkify() ([][]byte, error) {
 	var wg sync.WaitGroup
 	errChan := make(chan error, f.Pieces)
 
-	for i := 0; i < f.Pieces; i++ {
+	for i := range f.Pieces {
 		wg.Add(1)
 		go func(index int) {
 			defer wg.Done()
@@ -134,7 +133,7 @@ func (f *File) Merge(chunks [][]byte) error {
 		}
 	}
 
-	mergedHash, err := calculateFileHash(outPath)
+	mergedHash, err := calculateFileHash(f)
 	if err != nil {
 		return fmt.Errorf("failed to verify merged file: %w", err)
 	}
@@ -147,6 +146,13 @@ func (f *File) Merge(chunks [][]byte) error {
 	return nil
 }
 
-func calculateFileHash(outPath string) (string, error) {
-	return outPath, nil
+// TODO - calculateFileHash && verifyFileHash functions
+func calculateFileHash(file *File) (string, error) {
+	fmt.Println(file)
+	return "", nil
+}
+
+func verifyFileHash(file *File) (bool, error) {
+	fmt.Println("outpath: ", file)
+	return true, nil
 }

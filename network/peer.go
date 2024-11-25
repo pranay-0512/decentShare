@@ -13,22 +13,6 @@ import (
 	"p2p/file"
 )
 
-type PeerStatus int
-
-const (
-	StatusChoked PeerStatus = iota
-	StatusUnchoked
-	StatusInterested
-	StatusNotInterested
-)
-
-type PeerType int
-
-const (
-	TypeSeeder PeerType = iota
-	TypeLeecher
-)
-
 type PeerConfig struct {
 	Host              string
 	Port              int
@@ -42,7 +26,7 @@ type Peer struct {
 	peerType    PeerType
 	file        *file.File
 	connections map[string]*PeerConnection
-	bitfield    []bool
+	bitfield    []HavePiece
 	status      map[string]PeerStatus
 	mu          sync.RWMutex
 
@@ -62,25 +46,48 @@ type PeerConnection struct {
 	lastSeen time.Time
 }
 
+type ConnectionRequest struct {
+	addr     string
+	response chan *PeerConnection
+	err      chan error
+}
+
+type PeerStatus int
+
+type PeerType int
+
+type ConnectionState int
+
+type HavePiece int
+
+const (
+	FalseHavePiece HavePiece = iota
+	TrueHavePiece
+)
+
+const (
+	StatusChoked PeerStatus = iota
+	StatusUnchoked
+	StatusInterested
+	StatusNotInterested
+)
+
+const (
+	TypeSeeder PeerType = iota
+	TypeLeecher
+)
+
 const (
 	maxPendingConnections = 50
 	chokeInterval         = 10 * time.Second
 	keepAliveInterval     = 2 * time.Minute
 )
 
-type ConnectionState int
-
 const (
 	ConnectionPending ConnectionState = iota
 	ConnectionActive
 	ConnectionClosed
 )
-
-type ConnectionRequest struct {
-	addr     string
-	response chan *PeerConnection
-	err      chan error
-}
 
 // exported functions
 func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
@@ -89,7 +96,7 @@ func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 		file:        f,
 		peerType:    peerType,
 		connections: make(map[string]*PeerConnection),
-		bitfield:    make([]bool, f.Pieces),
+		bitfield:    make([]HavePiece, f.Pieces),
 		status:      make(map[string]PeerStatus),
 		done:        make(chan struct{}),
 		pieces:      make(chan []byte, f.Pieces),
@@ -353,6 +360,9 @@ func (p *Peer) readMessages(ctx context.Context, pc *PeerConnection) {
 func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 	// Implement message handling logic based on your protocol
 	// This is where you'd handle different message types (piece requests, bitfield updates, etc.)
+	switch msg {
+		
+	}
 	fmt.Println(pc, msg)
 	return nil
 }

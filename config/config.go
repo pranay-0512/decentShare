@@ -19,7 +19,7 @@ func DefaultNetworkConfig() NetworkConfig {
 	return NetworkConfig{
 		Host:      "0.0.0.0",
 		Port:      "52545",
-		BlockSize: 256 * 1024, // 256 KB
+		BlockSize: 128 * 1024, // 256 KB
 	}
 }
 
