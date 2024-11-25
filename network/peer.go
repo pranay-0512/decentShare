@@ -82,6 +82,7 @@ type ConnectionRequest struct {
 	err      chan error
 }
 
+// exported functions
 func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 	return &Peer{
 		config:      cfg,
@@ -100,6 +101,77 @@ func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 	}
 }
 
+func (p *Peer) Start(ctx context.Context) error {
+	go p.connectionManager(ctx)
+
+	if err := p.startListener(ctx); err != nil {
+		return err
+	}
+
+	go p.chokeManager(ctx)
+
+	return nil
+}
+
+func (p *Peer) Stop() {
+	close(p.done)
+	p.closeAllConnections()
+}
+
+func (p *Peer) ConnectToPeer(ctx context.Context, addr string) (*PeerConnection, error) {
+	response := make(chan *PeerConnection, 1)
+	errChan := make(chan error, 1)
+
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case p.connectionRequests <- ConnectionRequest{
+		addr:     addr,
+		response: response,
+		err:      errChan,
+	}:
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case conn := <-response:
+			return conn, nil
+		case err := <-errChan:
+			return nil, err
+		case <-time.After(p.config.ConnectionTimeout):
+			return nil, fmt.Errorf("Connection request time out")
+		}
+	}
+}
+
+func (p *Peer) GetPeerStats() map[string]interface{} {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	stats := map[string]interface{}{
+		"active_connections":  p.activeConnections,
+		"pending_connections": len(p.pendingConnections),
+		"max_connections":     p.config.MaxConnections,
+	}
+
+	connectionStates := make(map[string]string)
+	for addr := range p.connections {
+		state := "unknown"
+		switch p.pendingConnections[addr] {
+		case ConnectionPending:
+			state = "pending"
+		case ConnectionActive:
+			state = "active"
+		case ConnectionClosed:
+			state = "closed"
+		}
+		connectionStates[addr] = state
+	}
+
+	stats["connection_state"] = connectionStates
+	return stats
+}
+
+// internal functions
 func (p *Peer) connectionManager(ctx context.Context) {
 	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
@@ -193,76 +265,6 @@ func (p *Peer) dialWithTimeout(ctx context.Context, addr string) (net.Conn, erro
 	}
 
 	return conn, nil
-}
-
-func (p *Peer) Start(ctx context.Context) error {
-	go p.connectionManager(ctx)
-
-	if err := p.startListener(ctx); err != nil {
-		return err
-	}
-
-	go p.chokeManager(ctx)
-
-	return nil
-}
-
-func (p *Peer) Stop() {
-	close(p.done)
-	p.closeAllConnections()
-}
-
-func (p *Peer) ConnectToPeer(ctx context.Context, addr string) (*PeerConnection, error) {
-	response := make(chan *PeerConnection, 1)
-	errChan := make(chan error, 1)
-
-	select {
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	case p.connectionRequests <- ConnectionRequest{
-		addr:     addr,
-		response: response,
-		err:      errChan,
-	}:
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case conn := <-response:
-			return conn, nil
-		case err := <-errChan:
-			return nil, err
-		case <-time.After(p.config.ConnectionTimeout):
-			return nil, fmt.Errorf("Connection request time out")
-		}
-	}
-}
-
-func (p *Peer) GetPeerStats() map[string]interface{} {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	stats := map[string]interface{}{
-		"active_connections":  p.activeConnections,
-		"pending_connections": len(p.pendingConnections),
-		"max_connections":     p.config.MaxConnections,
-	}
-
-	connectionStates := make(map[string]string)
-	for addr := range p.connections {
-		state := "unknown"
-		switch p.pendingConnections[addr] {
-		case ConnectionPending:
-			state = "pending"
-		case ConnectionActive:
-			state = "active"
-		case ConnectionClosed:
-			state = "closed"
-		}
-		connectionStates[addr] = state
-	}
-
-	stats["connection_state"] = connectionStates
-	return stats
 }
 
 func (p *Peer) startListener(ctx context.Context) error {
@@ -391,14 +393,13 @@ func (p *Peer) chokeManager(ctx context.Context) {
 }
 
 func (p *Peer) updateChokes() {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
 	// Implement optimistic unchoking algorithm
 	// This would typically involve:
 	// 1. Ranking peers by their upload/download rates
 	// 2. Unchoking the top N peers
 	// 3. Randomly unchoking one additional peer (optimistic unchoke)
+	p.mu.Lock()
+	defer p.mu.Unlock()
 }
 
 func (p *Peer) closeAllConnections() {

@@ -18,31 +18,6 @@ import (
 func main() {
 
 	ExampleUsage()
-	// // Listen for incoming connections
-	// go func() {
-	// 	if err := peer.ListenTCP(); err != nil {
-	// 		log.Fatalf("Listening error: %v", err)
-	// 	}
-	// }()
-	// Option 2: Send a file to a specific peer
-	// go func() {
-	// 	err := peer.DialAndSendFile("192.168.1.166:5555", "C:/Users/linkp/OneDrive/Desktop/decentShare/main.txt")
-	// 	if err != nil {
-	// 		log.Printf("File send error: %v", err)
-	// 	}
-	// }()
-
-	// Option 3: Receive a file
-	// wg.Add(1)
-	// go func() {
-	// 	err := peer.ReceiveFile("C:/Users/linkp/OneDrive/Desktop/decentShare/main.txt")
-	// 	if err != nil {
-	// 		log.Printf("File receive error: %v", err)
-	// 	}
-	// 	wg.Done()
-	// }()
-	// peer.CloseAllConnections()
-	// wg.Wait()
 }
 
 func ExampleUsage() {
@@ -53,29 +28,25 @@ func ExampleUsage() {
 	}
 	ctx := context.Background()
 	cfg := network.PeerConfig{
-		Host:              "localhost",
+		Host:              "192.168.1.166",
 		Port:              8080,
 		MaxConnections:    50,
 		ConnectionTimeout: 30 * time.Second,
 		BlockSize:         16384,
 	}
 
-	// Create a new peer
 	peer := network.NewPeer(cfg, newFile, network.TypeLeecher)
 
-	// Start the peer (including connection manager)
 	if err := peer.Start(ctx); err != nil {
 		log.Fatalf("Failed to start peer: %v", err)
 	}
 
-	// Connect to a remote peer
 	_, err = peer.ConnectToPeer(ctx, "192.168.1.166.:8080")
 	if err != nil {
 		log.Printf("Failed to connect to peer: %v", err)
 		return
 	}
 
-	// Get connection stats
 	stats := peer.GetPeerStats()
 	log.Printf("Peer stats: %+v", stats)
 }
