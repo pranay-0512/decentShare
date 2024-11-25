@@ -16,12 +16,11 @@ import (
 )
 
 func main() {
-
 	ExampleUsage()
 }
 
 func ExampleUsage() {
-	path := "D:/Disk D files/[Nep_Blanc] Death Note [1080p] [x265] [10Bit] [Dual Audio] [Subbed] [Small]/[Nep_Blanc] Death Note 01 .mkv"
+	path := "C:\\Users\\linkp\\Downloads\\archlinux-2024.11.01-x86_64.iso"
 	newFile, err := file.NewFile(path)
 	if err != nil {
 		log.Panicln("error creating a new file: ", err)
@@ -35,7 +34,7 @@ func ExampleUsage() {
 		BlockSize:         16384,
 	}
 
-	peer := network.NewPeer(cfg, newFile, network.TypeLeecher)
+	peer := network.NewPeer(cfg, newFile, network.TypeSeeder)
 
 	if err := peer.Start(ctx); err != nil {
 		log.Fatalf("Failed to start peer: %v", err)
