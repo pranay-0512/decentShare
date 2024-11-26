@@ -1,4 +1,3 @@
-/dht/*
 /connection/udp
 /cmd/stun
 /connection/main.txt

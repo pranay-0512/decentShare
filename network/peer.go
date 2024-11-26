@@ -13,6 +13,10 @@ import (
 	"p2p/file"
 )
 
+type BitField struct {
+	bitfield []HavePiece
+}
+
 type PeerConfig struct {
 	Host              string
 	Port              int
@@ -31,7 +35,7 @@ type Peer struct {
 	mu          sync.RWMutex
 
 	done    chan struct{}
-	pieces  chan []byte
+	pieces  chan []byte // TODO - make it buffered, enqueing pieces as they are requested
 	errorCh chan error
 
 	connectionRequests chan ConnectionRequest
@@ -52,6 +56,18 @@ type ConnectionRequest struct {
 	err      chan error
 }
 
+type Piece struct {
+	pieceIndex  int // -> index of the piece requested
+	offset      int // -> byte offset within the piece
+	blockLength int // -> length of requested piece
+}
+
+type ReqMessage struct {
+	messageType MessageType // -> Piece req, bitfield, choke, unchoke, etc
+	piece       *Piece      // -> piece info incase the messagetype is piece req
+	other       interface{} // -> if messageType not piece req.
+}
+
 type PeerStatus int
 
 type PeerType int
@@ -59,6 +75,16 @@ type PeerType int
 type ConnectionState int
 
 type HavePiece int
+
+type MessageType int
+
+const (
+	PieceRequest MessageType = iota
+	Bitfield
+	Choke
+	Unchoke
+	Handshake
+)
 
 const (
 	FalseHavePiece HavePiece = iota
@@ -100,7 +126,7 @@ var _ PeerInterface = (*Peer)(nil)
 
 // exported functions
 func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
-	return &Peer{
+	peer := &Peer{
 		config:      cfg,
 		file:        f,
 		peerType:    peerType,
@@ -115,6 +141,7 @@ func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 		pendingConnections: make(map[string]ConnectionState),
 		activeConnections:  0,
 	}
+	return peer
 }
 
 func (p *Peer) Start(ctx context.Context) error {
@@ -199,7 +226,7 @@ func (p *Peer) connectionManager(ctx context.Context) {
 		case req := <-p.connectionRequests:
 			go p.handleConnectionRequests(ctx, req)
 		case <-ticker.C:
-			p.cleanupConnections()
+			go p.cleanupConnections()
 		}
 	}
 }
@@ -219,6 +246,7 @@ func (p *Peer) handleConnectionRequests(ctx context.Context, req ConnectionReque
 	if p.activeConnections >= p.config.MaxConnections {
 		p.mu.Lock()
 		req.err <- fmt.Errorf("connection limit reached (%d)", p.config.MaxConnections)
+		p.mu.Unlock()
 		return
 	}
 
@@ -259,10 +287,10 @@ func (p *Peer) cleanupConnections() {
 
 	now := time.Now()
 
-	for addr, conn := range p.connections {
-		if now.Sub(conn.lastSeen) > p.config.ConnectionTimeout*2 {
+	for addr, pConn := range p.connections {
+		if now.Sub(pConn.lastSeen) > p.config.ConnectionTimeout*2 {
 			log.Printf("Cleaning up inactive connections to %s", addr)
-			conn.conn.Close()
+			pConn.conn.Close()
 			delete(p.connections, addr)
 			delete(p.pendingConnections, addr)
 			p.activeConnections--
@@ -302,9 +330,9 @@ func (p *Peer) startListener(ctx context.Context) error {
 				if err != nil {
 					log.Printf("Failed to accept connection: %v", err)
 					continue
+				} else {
+					go p.handleConnection(ctx, conn)
 				}
-
-				go p.handleConnection(ctx, conn)
 			}
 		}
 	}()
@@ -367,12 +395,30 @@ func (p *Peer) readMessages(ctx context.Context, pc *PeerConnection) {
 }
 
 func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
-	// Implement message handling logic based on your protocol
-	// This is where you'd handle different message types (piece requests, bitfield updates, etc.)
-	switch msg {
-
+	// handle different message types (piece requests, bitfield updates, choking/unchoking/handshakes)
+	switch msgType := MessageType(msg[0]); msgType {
+	case PieceRequest:
+		// while reading messages from a connection, if the request is for a Piece, write that piece to the connnection
+		// the request will contain - piece information like index, offset, blocksize
+		// write the pieces asked to the connection
+		// if leecher state -> check if peer has the piece requested
+		// if seeder state -> the seeder is assumed to already have chunked the files for easy access of any piece
+		// piece request handle
+	case Bitfield:
+		_, err := pc.conn.Write(msg[1:])
+		if err != nil {
+			return err
+		}
+		// handle bitfield
+	case Choke:
+		// handle choke message types
+	case Unchoke:
+		// handle unchoke message types
+	case Handshake:
+		// handle handshake message types
+	default:
+		// handle default message
 	}
-	fmt.Println(pc, msg)
 	return nil
 }
 
