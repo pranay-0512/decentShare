@@ -35,6 +35,8 @@ type FileInterface interface {
 	Merge(tempDst string) error
 	CalculateHash() (string, error)
 	VerifyHash() (bool, error)
+	DeleteTempFiles() error
+	ReadChunk(chunkIndex int) ([]byte, error)
 }
 
 var _ FileInterface = (*File)(nil)
@@ -247,4 +249,20 @@ func (f *File) DeleteTempFiles() error {
 	}
 	fmt.Println("Deleted temp files successfully")
 	return nil
+}
+
+func (f *File) ReadChunk(chunkIndex int) ([]byte, error) {
+	chunkPath := filepath.Join(TempDst, "decent", fmt.Sprintf("%s_%d", f.FileName, chunkIndex))
+	chunkFile, err := os.Open(chunkPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open chunk file %d: %w", chunkIndex, err)
+	}
+	defer chunkFile.Close()
+
+	chunk := make([]byte, PieceSize)
+	_, err = chunkFile.Read(chunk)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read chunk file %d: %w", chunkIndex, err)
+	}
+	return chunk, nil
 }

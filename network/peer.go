@@ -74,7 +74,7 @@ type PeerType int
 
 type ConnectionState int
 
-type HavePiece int
+type HavePiece byte
 
 type MessageType int
 
@@ -361,6 +361,21 @@ func (p *Peer) handleConnection(ctx context.Context, conn net.Conn) {
 
 func (p *Peer) readMessages(ctx context.Context, pc *PeerConnection) {
 	buffer := make([]byte, p.config.BlockSize)
+	msgChan := make(chan []byte, 10)
+	msgErrChan := make(chan error, 10)
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case msg := <-msgChan:
+				if err := p.handleMessage(pc, msg); err != nil {
+					msgErrChan <- err
+				}
+			}
+		}
+	}()
 
 	for {
 		select {
@@ -384,40 +399,48 @@ func (p *Peer) readMessages(ctx context.Context, pc *PeerConnection) {
 				return
 			}
 
-			if err := p.handleMessage(pc, buffer[:n]); err != nil {
-				log.Printf("Failed to handle message: %v", err)
+			select {
+			case msgChan <- buffer[:n]:
+			case <-ctx.Done():
 				return
 			}
 
 			pc.lastSeen = time.Now()
 		}
+		select {
+		case err := <-msgErrChan:
+			if err != nil {
+				log.Printf("Failed to handle message: %v", err)
+			}
+		default:
+		}
 	}
 }
 
 func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
-	// handle different message types (piece requests, bitfield updates, choking/unchoking/handshakes)
 	switch msgType := MessageType(msg[0]); msgType {
 	case PieceRequest:
-		// while reading messages from a connection, if the request is for a Piece, write that piece to the connnection
-		// the request will contain - piece information like index, offset, blocksize
-		// write the pieces asked to the connection
-		// if leecher state -> check if peer has the piece requested
-		// if seeder state -> the seeder is assumed to already have chunked the files for easy access of any piece
-		// piece request handle
-	case Bitfield:
-		_, err := pc.conn.Write(msg[1:])
-		if err != nil {
-			return err
+		pieceIndex := int(msg[1])
+		if pieceIndex < 0 || pieceIndex >= len(p.bitfield) {
+			return fmt.Errorf("invalid piece index")
 		}
-		// handle bitfield
-	case Choke:
-		// handle choke message types
-	case Unchoke:
-		// handle unchoke message types
-	case Handshake:
-		// handle handshake message types
-	default:
-		// handle default message
+		exists := p.bitfield[pieceIndex] == TrueHavePiece
+		if !exists {
+			return fmt.Errorf("piece not available")
+		}
+		chunk, err := p.file.ReadChunk(pieceIndex)
+		if err != nil {
+			return fmt.Errorf("failed to read chunk: %w", err)
+		}
+		_, err = pc.conn.Write(chunk)
+		if err != nil {
+			return fmt.Errorf("failed to write chunk: %w", err)
+		}
+	case Bitfield:
+		_, err := pc.conn.Write([]byte{byte(Bitfield)})
+		if err != nil {
+			return fmt.Errorf("failed to write bitfield: %w", err)
+		}
 	}
 	return nil
 }
