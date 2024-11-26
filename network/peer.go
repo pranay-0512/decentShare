@@ -89,6 +89,15 @@ const (
 	ConnectionClosed
 )
 
+type PeerInterface interface {
+	Start(context.Context) error
+	Stop()
+	ConnectToPeer(context.Context, string) (*PeerConnection, error)
+	GetPeerStats() map[string]interface{}
+}
+
+var _ PeerInterface = (*Peer)(nil)
+
 // exported functions
 func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 	return &Peer{
@@ -361,7 +370,7 @@ func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 	// Implement message handling logic based on your protocol
 	// This is where you'd handle different message types (piece requests, bitfield updates, etc.)
 	switch msg {
-		
+
 	}
 	fmt.Println(pc, msg)
 	return nil
