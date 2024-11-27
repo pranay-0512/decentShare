@@ -41,6 +41,12 @@ type Peer struct {
 	connectionRequests chan ConnectionRequest
 	pendingConnections map[string]ConnectionState
 	activeConnections  int
+
+	uploadRate      float64
+	downloadRate    float64
+	lastUnchoked    time.Time
+	uploadHistory   []float64
+	downloadHistory []float64
 }
 
 type PeerConnection struct {
@@ -106,7 +112,7 @@ const (
 const (
 	maxPendingConnections = 50
 	chokeInterval         = 10 * time.Second
-	keepAliveInterval     = 2 * time.Minute
+	keepAliveInterval     = 1 * time.Minute
 )
 
 const (
@@ -140,6 +146,12 @@ func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 		connectionRequests: make(chan ConnectionRequest),
 		pendingConnections: make(map[string]ConnectionState),
 		activeConnections:  0,
+
+		uploadRate:      0,
+		downloadRate:    0,
+		lastUnchoked:    time.Time{},
+		uploadHistory:   make([]float64, 0),
+		downloadHistory: make([]float64, 0),
 	}
 	return peer
 }
@@ -445,6 +457,47 @@ func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 	return nil
 }
 
+func (p *Peer) sendMessage(pc *PeerConnection, msg ReqMessage) error {
+	var data []byte
+
+	switch msg.messageType {
+	case PieceRequest:
+		if msg.piece == nil {
+			return fmt.Errorf("missing piece info")
+		}
+		data = make([]byte, 5)
+		data[0] = byte(PieceRequest)
+		binary.BigEndian.PutUint32(data[1:], uint32(msg.piece.pieceIndex))
+	case Bitfield:
+		data = []byte{byte(Bitfield)}
+	case Choke:
+		data = []byte{byte(Choke)}
+	case Unchoke:
+		data = []byte{byte(Unchoke)}
+	case Handshake:
+		handshakeData, ok := msg.other.([]byte)
+		if !ok {
+			return fmt.Errorf("invalid handshke data")
+		}
+		data = make([]byte, 1+len(handshakeData))
+		data[0] = byte(Handshake)
+		copy(data[:1], handshakeData)
+	default:
+		return fmt.Errorf("unsuporrted message type")
+	}
+
+	msgLen := uint32(len(data))
+
+	if err := binary.Write(pc.conn, binary.BigEndian, msgLen); err != nil {
+		return fmt.Errorf("failed to write message length: %w", err)
+	}
+
+	if _, err := pc.conn.Write(data); err != nil {
+		return fmt.Errorf("failed to write message data: %w", err)
+	}
+	return nil
+}
+
 func (p *Peer) keepAlive(ctx context.Context, pc *PeerConnection) {
 	ticker := time.NewTicker(keepAliveInterval)
 	defer ticker.Stop()
@@ -481,13 +534,66 @@ func (p *Peer) chokeManager(ctx context.Context) {
 }
 
 func (p *Peer) updateChokes() {
-	// Implement optimistic unchoking algorithm
-	// This would typically involve:
-	// 1. Ranking peers by their upload/download rates
-	// 2. Unchoking the top N peers
-	// 3. Randomly unchoking one additional peer (optimistic unchoke)
 	p.mu.Lock()
 	defer p.mu.Unlock()
+
+	switch p.peerType {
+	case TypeSeeder:
+		/*
+			Every 20 seconds:
+			- Unchoke 3 peers based on:
+				1. High download rates
+				2. Latest unchoked time
+			- Add 1 random peer (optimistic unchoke)
+			- After 10 more seconds:
+				- Choke the random peer
+				- Unchoke the 4th highest peer in the ordered list
+		*/
+	case TypeLeecher:
+		/*
+			Every 10 seconds:
+			- Unchoke top 3 peers with highest upload rates
+			- Add 1 random peer (optimistic unchoke)
+			- Punishes free riders by prioritizing peers who contribute
+		*/
+
+	}
+}
+
+func (p *Peer) updateRates(uploadBytes, downloadBytes int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	duration := time.Since(p.lastUnchoked)
+
+	uploadRate := float64(uploadBytes) / duration.Seconds()
+	downloadRate := float64(downloadBytes) / duration.Seconds()
+
+	p.uploadHistory = append(p.uploadHistory, uploadRate)
+	p.downloadHistory = append(p.downloadHistory, downloadRate)
+
+	if len(p.uploadHistory) > 10 {
+		p.uploadHistory = p.uploadHistory[1:]
+	}
+	if len(p.downloadHistory) > 0 {
+		p.downloadHistory = p.downloadHistory[1:]
+	}
+
+	p.uploadRate = calculateAvg(p.uploadHistory)
+	p.downloadRate = calculateAvg(p.downloadHistory)
+}
+
+func calculateAvg(rates []float64) float64 {
+	if len(rates) == 0 {
+		return 0
+	}
+
+	var sum float64
+	for _, rate := range rates {
+		sum += rate
+	}
+
+	return sum / float64(len(rates))
 }
 
 func (p *Peer) closeAllConnections() {
