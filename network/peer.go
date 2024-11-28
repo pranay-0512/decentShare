@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand/v2"
 	"net"
+	"sort"
 	"sync"
 	"time"
 
@@ -35,25 +37,28 @@ type Peer struct {
 	mu          sync.RWMutex
 
 	done    chan struct{}
-	pieces  chan []byte // TODO - make it buffered, enqueing pieces as they are requested
+	pieces  chan []byte // TODO - make it buffered, enqueing pieces as they are requested, the length will be capped to 100 (100mb RAM use)
 	errorCh chan error
 
 	connectionRequests chan ConnectionRequest
 	pendingConnections map[string]ConnectionState
 	activeConnections  int
 
-	uploadRate      float64
-	downloadRate    float64
-	lastUnchoked    time.Time
-	uploadHistory   []float64
-	downloadHistory []float64
+	lastUnchoked time.Time
+
+	interestedPeers map[string]*PeerConnection
 }
 
 type PeerConnection struct {
-	conn     net.Conn
-	addr     string
-	status   PeerStatus
-	lastSeen time.Time
+	conn            net.Conn
+	addr            string
+	status          PeerStatus
+	lastSeen        time.Time
+	uploadRate      float64
+	downloadRate    float64
+	uploadHistory   []float64
+	downloadHistory []float64
+	mu              sync.RWMutex
 }
 
 type ConnectionRequest struct {
@@ -131,7 +136,7 @@ type PeerInterface interface {
 var _ PeerInterface = (*Peer)(nil)
 
 // exported functions
-func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
+func New(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 	peer := &Peer{
 		config:      cfg,
 		file:        f,
@@ -147,11 +152,9 @@ func NewPeer(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 		pendingConnections: make(map[string]ConnectionState),
 		activeConnections:  0,
 
-		uploadRate:      0,
-		downloadRate:    0,
-		lastUnchoked:    time.Time{},
-		uploadHistory:   make([]float64, 0),
-		downloadHistory: make([]float64, 0),
+		lastUnchoked: time.Time{},
+
+		interestedPeers: make(map[string]*PeerConnection),
 	}
 	return peer
 }
@@ -448,11 +451,13 @@ func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 		if err != nil {
 			return fmt.Errorf("failed to write chunk: %w", err)
 		}
+		pc.status = StatusInterested
 	case Bitfield:
 		_, err := pc.conn.Write([]byte{byte(Bitfield)})
 		if err != nil {
 			return fmt.Errorf("failed to write bitfield: %w", err)
 		}
+		pc.status = StatusInterested
 	}
 	return nil
 }
@@ -536,7 +541,6 @@ func (p *Peer) chokeManager(ctx context.Context) {
 func (p *Peer) updateChokes() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-
 	switch p.peerType {
 	case TypeSeeder:
 		/*
@@ -549,6 +553,43 @@ func (p *Peer) updateChokes() {
 				- Choke the random peer
 				- Unchoke the 4th highest peer in the ordered list
 		*/
+		var randomPeer *PeerConnection
+		interestedPeers := make([]*PeerConnection, 0)
+		for _, pc := range p.connections {
+			if pc.status == StatusInterested {
+				interestedPeers = append(interestedPeers, pc)
+			}
+		}
+
+		sort.Slice(interestedPeers, func(i, j int) bool {
+			return interestedPeers[i].downloadRate > interestedPeers[j].downloadRate
+		})
+
+		for i := 0; i < min(3, len(interestedPeers)); i++ {
+			p.sendMessage(interestedPeers[i], ReqMessage{
+				messageType: Unchoke,
+			})
+		}
+		if len(interestedPeers) > 3 {
+			randomPeer = interestedPeers[rand.IntN(len(interestedPeers))]
+			p.sendMessage(randomPeer, ReqMessage{
+				messageType: Unchoke,
+			})
+			time.AfterFunc(10*time.Second, func() {
+				p.mu.Lock()
+				defer p.mu.Unlock()
+				p.sendMessage(randomPeer, ReqMessage{
+					messageType: Choke,
+				})
+
+				if len(interestedPeers) >= 4 {
+					fourthPeer := interestedPeers[3]
+					p.sendMessage(fourthPeer, ReqMessage{
+						messageType: Unchoke,
+					})
+				}
+			})
+		}
 	case TypeLeecher:
 		/*
 			Every 10 seconds:
@@ -556,31 +597,62 @@ func (p *Peer) updateChokes() {
 			- Add 1 random peer (optimistic unchoke)
 			- Punishes free riders by prioritizing peers who contribute
 		*/
+		interestedPeers := make([]*PeerConnection, 0)
+		for _, pc := range p.connections {
+			if pc.status == StatusInterested {
+				interestedPeers = append(interestedPeers, pc)
+			}
+		}
 
+		sort.Slice(interestedPeers, func(i, j int) bool {
+			return interestedPeers[i].uploadRate > interestedPeers[j].uploadRate
+		})
+
+		for i := 0; i < min(3, len(interestedPeers)); i++ {
+			p.sendMessage(interestedPeers[i], ReqMessage{
+				messageType: Unchoke,
+			})
+		}
+
+		if len(interestedPeers) > 3 {
+			randomPeer := interestedPeers[rand.IntN(len(interestedPeers))]
+			p.sendMessage(randomPeer, ReqMessage{
+				messageType: Unchoke,
+			})
+		}
 	}
 }
 
-func (p *Peer) updateRates(uploadBytes, downloadBytes int) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
+func (pc *PeerConnection) updateUploadRates(uploadBytes int) {
+	pc.mu.Lock()
+	defer pc.mu.Unlock()
 
-	duration := time.Since(p.lastUnchoked)
-
+	duration := time.Since(pc.lastSeen)
 	uploadRate := float64(uploadBytes) / duration.Seconds()
+
+	pc.uploadHistory = append(pc.uploadHistory, uploadRate)
+
+	if len(pc.uploadHistory) > 10 {
+		pc.uploadHistory = pc.uploadHistory[1:]
+	}
+
+	pc.uploadRate = calculateAvg(pc.uploadHistory)
+}
+func (pc *PeerConnection) updateDownloadRates(downloadBytes int) {
+	pc.mu.Lock()
+	defer pc.mu.Unlock()
+
+	duration := time.Since(pc.lastSeen)
+
 	downloadRate := float64(downloadBytes) / duration.Seconds()
 
-	p.uploadHistory = append(p.uploadHistory, uploadRate)
-	p.downloadHistory = append(p.downloadHistory, downloadRate)
+	pc.downloadHistory = append(pc.downloadHistory, downloadRate)
 
-	if len(p.uploadHistory) > 10 {
-		p.uploadHistory = p.uploadHistory[1:]
-	}
-	if len(p.downloadHistory) > 0 {
-		p.downloadHistory = p.downloadHistory[1:]
+	if len(pc.downloadHistory) > 10 {
+		pc.downloadHistory = pc.downloadHistory[1:]
 	}
 
-	p.uploadRate = calculateAvg(p.uploadHistory)
-	p.downloadRate = calculateAvg(p.downloadHistory)
+	pc.downloadRate = calculateAvg(pc.downloadHistory)
 }
 
 func calculateAvg(rates []float64) float64 {

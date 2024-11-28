@@ -1,6 +1,6 @@
 /*
 V1: Make sure 2 peers can send and receive files - Use TCP --DONE
-V2: Reciprocating, Choking and Interested algorithm --DONE, what is left -- optimistic and random choking, and interested, uninterested,
+V2: Reciprocating, Choking and Interested algorithm --DONE, what is left -- piece selection algorithm -> random first policy, rarest first policy, strict priority policy
 V3: Peer discovery & Kademlia DHT
 V4: NAT Traversals
 V5: File encryption
@@ -43,7 +43,7 @@ func ExampleUsage() {
 		BlockSize:         16384,
 	}
 
-	peer := network.NewPeer(cfg, newFile, network.TypeSeeder)
+	peer := network.New(cfg, newFile, network.TypeSeeder)
 
 	if err := peer.Start(ctx); err != nil {
 		log.Fatalf("Failed to start peer: %v", err)
