@@ -32,7 +32,6 @@ type Peer struct {
 	peerType    PeerType
 	file        *file.File
 	connections map[string]*PeerConnection
-	bitfield    []HavePiece
 	status      map[string]PeerStatus
 	mu          sync.RWMutex
 
@@ -58,6 +57,8 @@ type PeerConnection struct {
 	downloadRate    float64
 	uploadHistory   []float64
 	downloadHistory []float64
+	bitfield        []HavePiece
+	haveQueue       chan Piece // initializing a buffered channel (with definite size = file.pieces)
 	mu              sync.RWMutex
 }
 
@@ -142,7 +143,6 @@ func New(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 		file:        f,
 		peerType:    peerType,
 		connections: make(map[string]*PeerConnection),
-		bitfield:    make([]HavePiece, f.Pieces),
 		status:      make(map[string]PeerStatus),
 		done:        make(chan struct{}),
 		pieces:      make(chan []byte, f.Pieces),
@@ -436,10 +436,10 @@ func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 	switch msgType := MessageType(msg[0]); msgType {
 	case PieceRequest:
 		pieceIndex := int(msg[1])
-		if pieceIndex < 0 || pieceIndex >= len(p.bitfield) {
+		if pieceIndex < 0 || pieceIndex >= len(pc.bitfield) {
 			return fmt.Errorf("invalid piece index")
 		}
-		exists := p.bitfield[pieceIndex] == TrueHavePiece
+		exists := pc.bitfield[pieceIndex] == TrueHavePiece
 		if !exists {
 			return fmt.Errorf("piece not available")
 		}
@@ -524,6 +524,7 @@ func (p *Peer) sendKeepAlive(pc *PeerConnection) error {
 	return binary.Write(pc.conn, binary.BigEndian, uint32(0))
 }
 
+// choking algorithm
 func (p *Peer) chokeManager(ctx context.Context) {
 	ticker := time.NewTicker(chokeInterval)
 	defer ticker.Stop()
@@ -638,6 +639,7 @@ func (pc *PeerConnection) updateUploadRates(uploadBytes int) {
 
 	pc.uploadRate = calculateAvg(pc.uploadHistory)
 }
+
 func (pc *PeerConnection) updateDownloadRates(downloadBytes int) {
 	pc.mu.Lock()
 	defer pc.mu.Unlock()
@@ -676,4 +678,27 @@ func (p *Peer) closeAllConnections() {
 		conn.conn.Close()
 	}
 	p.connections = make(map[string]*PeerConnection)
+}
+
+// piece selection algorithm
+func (p *Peer) pieceSelection() {
+	// random piece first
+	// select a random piece out of all available piece out there...
+	// how to get random pieces? 
+	// choose a random peerConnection from the map, select a random piece from him
+	// rarest piece first policy
+	frqMap := make(map[*Piece]int)
+	for _, pc := range p.connections {
+		rareP := <-pc.haveQueue
+		if _, exist := frqMap[&rareP]; !exist {
+			frqMap[&rareP] = 1
+		} else {
+			frqMap[&rareP]++
+		}
+	}
+	// pick random piece with the lowest frequency.
+
+
+	// strict priority policy
+	// end game
 }
