@@ -15,8 +15,22 @@ import (
 	"p2p/file"
 )
 
-type BitField struct {
-	bitfield []HavePiece
+type ConnectionRequest struct {
+	addr     string
+	response chan *PeerConnection
+	err      chan error
+}
+
+type Piece struct {
+	pieceIndex  int // -> index of the piece requested
+	offset      int // -> byte offset within the piece
+	blockLength int // -> length of requested piece's block
+}
+
+type ReqMessage struct {
+	messageType MessageType // -> Piece req, bitfield, choke, unchoke, etc
+	piece       *Piece      // -> piece info incase the messagetype is piece req
+	other       interface{} // -> if messageType not piece req.
 }
 
 type PeerConfig struct {
@@ -27,66 +41,72 @@ type PeerConfig struct {
 	BlockSize         int
 }
 
+type PeerConnection struct { // all the details are of the connected peer
+	conn        net.Conn
+	addr        string
+	status      PeerStatus
+	peerDetails PeerDetails
+	mu          sync.RWMutex
+}
+
+type PeerDetails struct {
+	lastUnchoked time.Time
+	uploadRate   float64
+	downloadRate float64
+	bitfield     []HavePiece
+	haveQueue    chan Piece
+}
+
 type Peer struct {
 	config      PeerConfig
 	peerType    PeerType
 	file        *file.File
 	connections map[string]*PeerConnection
-	status      map[string]PeerStatus
 	mu          sync.RWMutex
+	peerDetails PeerDetails
 
 	done    chan struct{}
-	pieces  chan []byte // TODO - make it buffered, enqueing pieces as they are requested, the length will be capped to 100 (100mb RAM use)
+	pieces  chan []byte
 	errorCh chan error
 
 	connectionRequests chan ConnectionRequest
 	pendingConnections map[string]ConnectionState
 	activeConnections  int
 
-	lastUnchoked time.Time
-
-	interestedPeers map[string]*PeerConnection
-}
-
-type PeerConnection struct {
-	conn            net.Conn
-	addr            string
-	status          PeerStatus
-	lastSeen        time.Time
-	uploadRate      float64
-	downloadRate    float64
 	uploadHistory   []float64
 	downloadHistory []float64
-	bitfield        []HavePiece
-	haveQueue       chan Piece // initializing a buffered channel (with definite size = file.pieces)
-	mu              sync.RWMutex
-}
-
-type ConnectionRequest struct {
-	addr     string
-	response chan *PeerConnection
-	err      chan error
-}
-
-type Piece struct {
-	pieceIndex  int // -> index of the piece requested
-	offset      int // -> byte offset within the piece
-	blockLength int // -> length of requested piece
-}
-
-type ReqMessage struct {
-	messageType MessageType // -> Piece req, bitfield, choke, unchoke, etc
-	piece       *Piece      // -> piece info incase the messagetype is piece req
-	other       interface{} // -> if messageType not piece req.
 }
 
 type PeerStatus int
 
+const (
+	StatusChoked PeerStatus = iota
+	StatusUnchoked
+	StatusInterested
+	StatusNotInterested
+)
+
 type PeerType int
+
+const (
+	TypeSeeder PeerType = iota
+	TypeLeecher
+)
 
 type ConnectionState int
 
+const (
+	ConnectionPending ConnectionState = iota
+	ConnectionActive
+	ConnectionClosed
+)
+
 type HavePiece byte
+
+const (
+	FalseHavePiece HavePiece = iota
+	TrueHavePiece
+)
 
 type MessageType int
 
@@ -99,32 +119,9 @@ const (
 )
 
 const (
-	FalseHavePiece HavePiece = iota
-	TrueHavePiece
-)
-
-const (
-	StatusChoked PeerStatus = iota
-	StatusUnchoked
-	StatusInterested
-	StatusNotInterested
-)
-
-const (
-	TypeSeeder PeerType = iota
-	TypeLeecher
-)
-
-const (
 	maxPendingConnections = 50
 	chokeInterval         = 10 * time.Second
 	keepAliveInterval     = 1 * time.Minute
-)
-
-const (
-	ConnectionPending ConnectionState = iota
-	ConnectionActive
-	ConnectionClosed
 )
 
 type PeerInterface interface {
@@ -140,21 +137,27 @@ var _ PeerInterface = (*Peer)(nil)
 func New(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 	peer := &Peer{
 		config:      cfg,
-		file:        f,
 		peerType:    peerType,
+		file:        f,
 		connections: make(map[string]*PeerConnection),
-		status:      make(map[string]PeerStatus),
-		done:        make(chan struct{}),
-		pieces:      make(chan []byte, f.Pieces),
-		errorCh:     make(chan error, 10),
+		peerDetails: PeerDetails{
+			bitfield:     make([]HavePiece, f.Pieces),
+			haveQueue:    make(chan Piece, 10),
+			uploadRate:   0,
+			downloadRate: 0,
+			lastUnchoked: time.Now(),
+		},
+
+		done:    make(chan struct{}),
+		pieces:  make(chan []byte, f.Pieces),
+		errorCh: make(chan error, 10),
 
 		connectionRequests: make(chan ConnectionRequest),
 		pendingConnections: make(map[string]ConnectionState),
 		activeConnections:  0,
 
-		lastUnchoked: time.Time{},
-
-		interestedPeers: make(map[string]*PeerConnection),
+		uploadHistory:   make([]float64, 0, 10),
+		downloadHistory: make([]float64, 0, 10),
 	}
 	return peer
 }
@@ -276,12 +279,17 @@ func (p *Peer) handleConnectionRequests(ctx context.Context, req ConnectionReque
 		req.err <- fmt.Errorf("failed to establish connection %w", err)
 		return
 	}
-
 	peerConn := &PeerConnection{
-		conn:     conn,
-		addr:     req.addr,
-		status:   StatusChoked,
-		lastSeen: time.Now(),
+		conn:   conn,
+		addr:   req.addr,
+		status: StatusChoked,
+		peerDetails: PeerDetails{
+			bitfield:     make([]HavePiece, p.file.Pieces),
+			haveQueue:    make(chan Piece, 10),
+			uploadRate:   0,
+			downloadRate: 0,
+			lastUnchoked: time.Now(),
+		},
 	}
 
 	p.mu.Lock()
@@ -303,7 +311,7 @@ func (p *Peer) cleanupConnections() {
 	now := time.Now()
 
 	for addr, pConn := range p.connections {
-		if now.Sub(pConn.lastSeen) > p.config.ConnectionTimeout*2 {
+		if now.Sub(pConn.peerDetails.lastUnchoked) > p.config.ConnectionTimeout*2 {
 			log.Printf("Cleaning up inactive connections to %s", addr)
 			pConn.conn.Close()
 			delete(p.connections, addr)
@@ -359,10 +367,16 @@ func (p *Peer) handleConnection(ctx context.Context, conn net.Conn) {
 	defer conn.Close()
 
 	peerConn := &PeerConnection{
-		conn:     conn,
-		addr:     conn.RemoteAddr().String(),
-		status:   StatusChoked,
-		lastSeen: time.Now(),
+		conn:   conn,
+		addr:   conn.RemoteAddr().String(),
+		status: StatusChoked,
+		peerDetails: PeerDetails{
+			bitfield:     make([]HavePiece, p.file.Pieces),
+			haveQueue:    make(chan Piece, 10),
+			uploadRate:   0,
+			downloadRate: 0,
+			lastUnchoked: time.Now(),
+		},
 	}
 
 	p.mu.Lock()
@@ -420,7 +434,7 @@ func (p *Peer) readMessages(ctx context.Context, pc *PeerConnection) {
 				return
 			}
 
-			pc.lastSeen = time.Now()
+			pc.peerDetails.lastUnchoked = time.Now()
 		}
 		select {
 		case err := <-msgErrChan:
@@ -436,10 +450,10 @@ func (p *Peer) handleMessage(pc *PeerConnection, msg []byte) error {
 	switch msgType := MessageType(msg[0]); msgType {
 	case PieceRequest:
 		pieceIndex := int(msg[1])
-		if pieceIndex < 0 || pieceIndex >= len(pc.bitfield) {
+		if pieceIndex < 0 || pieceIndex >= len(pc.peerDetails.bitfield) {
 			return fmt.Errorf("invalid piece index")
 		}
-		exists := pc.bitfield[pieceIndex] == TrueHavePiece
+		exists := pc.peerDetails.bitfield[pieceIndex] == TrueHavePiece
 		if !exists {
 			return fmt.Errorf("piece not available")
 		}
@@ -563,7 +577,7 @@ func (p *Peer) updateChokes() {
 		}
 
 		sort.Slice(interestedPeers, func(i, j int) bool {
-			return interestedPeers[i].downloadRate > interestedPeers[j].downloadRate
+			return interestedPeers[i].peerDetails.downloadRate > interestedPeers[j].peerDetails.downloadRate
 		})
 
 		for i := 0; i < min(3, len(interestedPeers)); i++ {
@@ -606,7 +620,7 @@ func (p *Peer) updateChokes() {
 		}
 
 		sort.Slice(interestedPeers, func(i, j int) bool {
-			return interestedPeers[i].uploadRate > interestedPeers[j].uploadRate
+			return interestedPeers[i].peerDetails.uploadRate > interestedPeers[j].peerDetails.downloadRate
 		})
 
 		for i := 0; i < min(3, len(interestedPeers)); i++ {
@@ -624,37 +638,37 @@ func (p *Peer) updateChokes() {
 	}
 }
 
-func (pc *PeerConnection) updateUploadRates(uploadBytes int) {
-	pc.mu.Lock()
-	defer pc.mu.Unlock()
+func (p *Peer) updateUploadRates(uploadBytes int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 
-	duration := time.Since(pc.lastSeen)
+	duration := time.Since(p.peerDetails.lastUnchoked)
 	uploadRate := float64(uploadBytes) / duration.Seconds()
 
-	pc.uploadHistory = append(pc.uploadHistory, uploadRate)
+	p.uploadHistory = append(p.uploadHistory, uploadRate)
 
-	if len(pc.uploadHistory) > 10 {
-		pc.uploadHistory = pc.uploadHistory[1:]
+	if len(p.uploadHistory) > 10 {
+		p.uploadHistory = p.uploadHistory[1:]
 	}
 
-	pc.uploadRate = calculateAvg(pc.uploadHistory)
+	p.peerDetails.uploadRate = calculateAvg(p.uploadHistory)
 }
 
-func (pc *PeerConnection) updateDownloadRates(downloadBytes int) {
-	pc.mu.Lock()
-	defer pc.mu.Unlock()
+func (p *Peer) updateDownloadRates(downloadBytes int) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 
-	duration := time.Since(pc.lastSeen)
+	duration := time.Since(p.peerDetails.lastUnchoked)
 
 	downloadRate := float64(downloadBytes) / duration.Seconds()
 
-	pc.downloadHistory = append(pc.downloadHistory, downloadRate)
+	p.downloadHistory = append(p.downloadHistory, downloadRate)
 
-	if len(pc.downloadHistory) > 10 {
-		pc.downloadHistory = pc.downloadHistory[1:]
+	if len(p.downloadHistory) > 10 {
+		p.downloadHistory = p.downloadHistory[1:]
 	}
 
-	pc.downloadRate = calculateAvg(pc.downloadHistory)
+	p.peerDetails.downloadRate = calculateAvg(p.downloadHistory)
 }
 
 func calculateAvg(rates []float64) float64 {
@@ -680,25 +694,57 @@ func (p *Peer) closeAllConnections() {
 	p.connections = make(map[string]*PeerConnection)
 }
 
-// piece selection algorithm
-func (p *Peer) pieceSelection() {
-	// random piece first
-	// select a random piece out of all available piece out there...
-	// how to get random pieces? 
-	// choose a random peerConnection from the map, select a random piece from him
-	// rarest piece first policy
+func (p *Peer) pieceSelection() *Piece {
+	if p.connections == nil {
+		return nil
+	}
+
+	// select a random piece if the number of peers is less than 4
+	if len(p.peerDetails.haveQueue) < 4 {
+		pieceIndex := rand.IntN(p.file.Pieces)
+		if p.peerDetails.bitfield[pieceIndex] == FalseHavePiece {
+			return &Piece{
+				pieceIndex:  pieceIndex,
+				offset:      0,
+				blockLength: p.config.BlockSize,
+			}
+		}
+	}
+
 	frqMap := make(map[*Piece]int)
 	for _, pc := range p.connections {
-		rareP := <-pc.haveQueue
+		rareP := <-pc.peerDetails.haveQueue
 		if _, exist := frqMap[&rareP]; !exist {
 			frqMap[&rareP] = 1
 		} else {
 			frqMap[&rareP]++
 		}
 	}
-	// pick random piece with the lowest frequency.
+	// find the rarest piece
+	var minFreq int = int(^uint(0) >> 1)
+	var rarestPiece *Piece
 
+	for piece, freq := range frqMap {
+		if freq < minFreq {
+			minFreq = freq
+			rarestPiece = piece
+		}
+	}
+	return rarestPiece
+}
 
-	// strict priority policy
-	// end game
+func (p *Peer) calculateAvailablePiecesPercentage() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	availablePieces := 0
+	for _, pc := range p.connections {
+		for _, piece := range pc.peerDetails.bitfield {
+			if piece == TrueHavePiece {
+				availablePieces++
+			}
+		}
+	}
+
+	return availablePieces * 100 / p.file.Pieces
 }
