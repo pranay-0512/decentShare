@@ -36,7 +36,7 @@ func ExampleUsage() {
 
 	ctx := context.Background()
 	cfg := network.PeerConfig{
-		Host:              "192.168.1.166",
+		Host:              "192.168.29.119",
 		Port:              8080,
 		MaxConnections:    50,
 		ConnectionTimeout: 30 * time.Second,
@@ -49,7 +49,7 @@ func ExampleUsage() {
 		log.Fatalf("Failed to start peer: %v", err)
 	}
 
-	_, err = peer.ConnectToPeer(ctx, "192.168.1.166.:8080")
+	_, err = peer.ConnectToPeer(ctx, "192.168.29.119.:8080")
 	if err != nil {
 		log.Printf("Failed to connect to peer: %v", err)
 		return

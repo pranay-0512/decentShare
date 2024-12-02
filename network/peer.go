@@ -22,9 +22,7 @@ type ConnectionRequest struct {
 }
 
 type Piece struct {
-	pieceIndex  int // -> index of the piece requested
-	offset      int // -> byte offset within the piece
-	blockLength int // -> length of requested piece's block
+	pieceIndex int // -> index of the piece requested
 }
 
 type ReqMessage struct {
@@ -704,9 +702,7 @@ func (p *Peer) pieceSelection() *Piece {
 		pieceIndex := rand.IntN(p.file.Pieces)
 		if p.peerDetails.bitfield[pieceIndex] == FalseHavePiece {
 			return &Piece{
-				pieceIndex:  pieceIndex,
-				offset:      0,
-				blockLength: p.config.BlockSize,
+				pieceIndex: pieceIndex,
 			}
 		}
 	}
