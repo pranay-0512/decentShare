@@ -2,17 +2,14 @@ package dht
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"fmt"
 	"math/big"
+	"net"
+	"sort"
 	"sync"
 	"time"
 )
-
-// kademlia
-// implement a DHT finding algorithm that uses XOR_Addresses to find the nearest
-// distance between different nodes.
-// it implements a trie. Each trie is a bit.
-// A path (1 1 0 0 1) is id of a node or a peer.
 
 /*
 Each machine acts as a node. Each node will have 2 things. A KV store and a routing table.
@@ -144,4 +141,59 @@ func (rt *RoutingTable) AddContact(contact *Contact) error {
 func (rt *RoutingTable) bucketIndexForNode(id NodeId) int {
 	distance := XORDistance(rt.selfId, id)
 	return IDLength - 1 - int(distance.BitLen())
+}
+
+func (rt *RoutingTable) FindClosestContacts(target NodeId, k int) []*Contact {
+	rt.bktMutex.RLock()
+	defer rt.bktMutex.RUnlock()
+
+	var contacts []*Contact
+
+	for _, bucket := range rt.kBuckets {
+		contacts = append(contacts, bucket...)
+	}
+
+	sort.Slice(contacts, func(i, j int) bool {
+		distI := XORDistance(target, contacts[i].ID)
+		distJ := XORDistance(target, contacts[j].ID)
+		return distI.Cmp(distJ) < 0
+	})
+
+	if len(contacts) < k {
+		return contacts
+	}
+
+	return contacts[:k]
+}
+
+func (n *Node) Store(key Key, value Value) error {
+	n.storeMtx.Lock()
+	defer n.storeMtx.Unlock()
+
+	n.kvStore[key] = value
+	return nil
+}
+
+func (n *Node) Lookup(key Key) (Value, bool) {
+	n.storeMtx.RLock()
+	defer n.storeMtx.RUnlock()
+
+	value, exists := n.kvStore[key]
+	return value, exists
+}
+
+func GenerateNodeID(addr net.Addr) NodeId {
+	hash := sha1.Sum([]byte(addr.String()))
+	var nodeId NodeId
+	copy(nodeId[:], hash[:])
+	return nodeId
+}
+
+func (n *Node) Ping(contact *Contact) bool {
+	//TODO implement the ping/pong logic
+	return false
+}
+
+func (n *Node) FindNode(target NodeId) []*Contact {
+	return n.routingTable.FindClosestContacts(target, KBucketSize)
 }
