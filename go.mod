@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/pion/dtls/v2 v2.2.7 // indirect
 	github.com/pion/logging v0.2.2 // indirect
 	github.com/pion/transport v0.8.9 // indirect
