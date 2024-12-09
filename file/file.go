@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"p2p/config"
 	"path/filepath"
 	"strconv"
 	"sync"
@@ -21,14 +22,13 @@ type File struct {
 }
 
 const (
-	PieceSize       = 1024 * 1024 // 1MB in bytes
-	DefaultDestPath = "C:\\Users\\linkp\\Downloads\\"
-	DestDir         = "decent/completed"
+	PieceSize = 1024 * 1024 // 1MB in bytes
 )
 
 var (
-	tempDir = filepath.Join(TempDst, "decent")
-	TempDst = os.TempDir()
+	DefaultDestPath = config.GetDestPath()
+	tempDir         = filepath.Join(TempDst, "decent")
+	TempDst         = os.TempDir()
 )
 
 type FileInterface interface {
@@ -173,12 +173,11 @@ func (f *File) Merge(tempDst string, errChan chan error) {
 		return
 	}
 
-	destDir := filepath.Join(DefaultDestPath, DestDir)
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	if err := os.MkdirAll(config.GetDestPath(), 0755); err != nil {
 		errChan <- fmt.Errorf("failed to create destination directory: %w", err)
 	}
 
-	outPath := filepath.Join(destDir, f.FileName)
+	outPath := filepath.Join(config.GetDestPath(), f.FileName)
 	outFile, err := os.Create(outPath)
 	if err != nil {
 		errChan <- fmt.Errorf("failed to create output file: %w", err)
@@ -215,6 +214,7 @@ func (f *File) Merge(tempDst string, errChan chan error) {
 	fmt.Println()
 	fmt.Printf("File merge completed in %v\n", time.Since(start))
 	f.DeleteTempFiles(errChan)
+	fmt.Println("check dest path", config.GetDestPath())
 }
 
 func (f *File) CalculateHash() {

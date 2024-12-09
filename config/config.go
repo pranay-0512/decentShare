@@ -5,6 +5,10 @@ import (
 	"path/filepath"
 )
 
+var (
+	DestPath = ""
+)
+
 type NetworkConfig struct {
 	Host      string
 	Port      string
@@ -28,4 +32,12 @@ func DefaultFileConfig() FileConfig {
 	return FileConfig{
 		BaseDirectory: filepath.Join(homeDir, "p2p-transfers"),
 	}
+}
+
+func SetDestPath(path string) {
+	DestPath = path
+}
+
+func GetDestPath() string {
+	return DestPath
 }

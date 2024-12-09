@@ -18,9 +18,14 @@ V5: File encryption
 package main
 
 import (
+	"fmt"
 	"log"
+	"p2p/config"
 	"p2p/file"
+	"path/filepath"
 	"sync"
+
+	"github.com/sqweek/dialog"
 )
 
 func main() {
@@ -29,7 +34,19 @@ func main() {
 
 func ExampleUsage() {
 	var wg sync.WaitGroup
-	path := "D:\\Disk D files\\[Nep_Blanc] Death Note [1080p] [x265] [10Bit] [Dual Audio] [Subbed] [Small]\\[Nep_Blanc] Death Note 04 .mkv"
+	path, err := dialog.File().Title("Select a file").Load()
+	if err != nil {
+		log.Panicln("error selecting a destination folder: ", err)
+		return
+	}
+	destPath, err := dialog.Directory().Title("Select a destination folder").Browse()
+	absPath := filepath.Join(destPath, "decent/completed")
+	config.SetDestPath(absPath)
+	fmt.Println("Chosen Destination path: ", absPath)
+	if err != nil {
+		log.Panicln("error selecting a file: ", err)
+		return
+	}
 	newFile, err := file.NewFile(path)
 	if err != nil {
 		log.Panicln("error creating a new file: ", err)
@@ -40,13 +57,7 @@ func ExampleUsage() {
 	go func() {
 		defer wg.Done()
 		newFile.Chunkify(errChan)
-		if err != nil {
-			log.Panicln("error chunkifying file: ", err)
-		}
 		newFile.Merge(file.TempDst, errChan)
-		if err != nil {
-			log.Println("error merging file: ", err)
-		}
 	}()
 	wg.Wait()
 	if len(errChan) > 0 {
@@ -55,6 +66,7 @@ func ExampleUsage() {
 		}
 	}
 	close(errChan)
+	fmt.Println("File saved at: ", config.GetDestPath())
 
 	// ctx := context.Background()
 	// cfg := network.PeerConfig{
