@@ -13,32 +13,36 @@ import (
 
 type File struct {
 	FileName  string
-	FilePath  string // Absolute path
-	FileSize  int64  // Size in bytes
-	Pieces    int    // Number of pieces
-	Hash      string // File hash for verification
-	PieceHash []string
+	FilePath  string   // Absolute path
+	FileSize  int64    // Size in bytes
+	Pieces    int      // Number of pieces
+	Hash      [20]byte // File hash for verification
+	PieceHash [][20]byte
 }
 
 const (
 	PieceSize       = 1024 * 1024 // 1MB in bytes
 	DefaultDestPath = "C:\\Users\\linkp\\Downloads\\"
+	DestDir         = "decent/completed"
 )
 
-var TempDst = os.TempDir()
+var (
+	tempDir = filepath.Join(TempDst, "decent")
+	TempDst = os.TempDir()
+)
 
 type FileInterface interface {
 	GetFileName() string
 	GetFilePath() string
 	GetFileSize() int64
 	GetPieceCount() int
-	GetHash() string
+	GetHash() [20]byte
 
-	Chunkify() error
-	Merge(tempDst string) error
+	Chunkify(errChan chan error)
+	Merge(tempDst string, errChan chan error)
 	CalculateHash()
 	VerifyHash() bool
-	DeleteTempFiles() error
+	DeleteTempFiles(errChan chan error)
 	ReadChunk(chunkIndex int) ([]byte, error)
 }
 
@@ -61,7 +65,7 @@ func NewFile(filePath string) (*File, error) {
 	}
 	file.FileSize = size
 	file.Pieces = file.pieceCount()
-	// file.PieceHash =
+	file.PieceHash = make([][20]byte, file.Pieces)
 
 	file.CalculateHash()
 
@@ -84,7 +88,7 @@ func (f *File) GetPieceCount() int {
 	return f.Pieces
 }
 
-func (f *File) GetHash() string {
+func (f *File) GetHash() [20]byte {
 	return f.Hash
 }
 
@@ -104,20 +108,18 @@ func (f *File) pieceCount() int {
 	return int(pieces)
 }
 
-func (f *File) Chunkify() error {
-	tempDir := filepath.Join(TempDst, "decent")
+func (f *File) Chunkify(errChan chan error) {
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		return fmt.Errorf("failed to create temp directory: %w", err)
+		errChan <- fmt.Errorf("failed to create temp directory: %w", err)
 	}
 	fmt.Println(tempDir)
 	file, err := os.Open(f.FilePath)
 	if err != nil {
-		return fmt.Errorf("failed to open file: %w", err)
+		errChan <- fmt.Errorf("failed to open file: %w", err)
 	}
 	defer file.Close()
 
 	var wg sync.WaitGroup
-	errChan := make(chan error, f.Pieces)
 
 	for i := range f.Pieces {
 		wg.Add(1)
@@ -134,8 +136,8 @@ func (f *File) Chunkify() error {
 
 			chunk := make([]byte, PieceSize)
 			offset := int64(i * PieceSize)
-
 			_, err = file.ReadAt(chunk, offset)
+			f.CalculatePieceHash(chunk, i)
 			if err != nil && err != io.EOF {
 				errChan <- fmt.Errorf("error reading chunk %d: %w", i, err)
 				return
@@ -153,88 +155,103 @@ func (f *File) Chunkify() error {
 		}(i)
 	}
 	wg.Wait()
-	close(errChan)
 
-	if len(errChan) > 0 {
-		return <-errChan
-	}	
 	f.CalculateHash()
-	fmt.Println("initial hash: ", f.Hash)
-	return nil
+	fmt.Println("initial file hash: ", f.Hash)
+	fmt.Println()
+	for i := range f.GetPieceCount() {
+		fmt.Print("piece: ", i, " ")
+		fmt.Println("piece hash: ", f.PieceHash[i])
+	}
+	fmt.Println()
 }
 
-func (f *File) Merge(tempDst string) error {
-	tempDir := filepath.Join(tempDst, "decent")
+func (f *File) Merge(tempDst string, errChan chan error) {
 	files, err := os.ReadDir(tempDir)
 	if err != nil {
-		return fmt.Errorf("failed to read temp directory: %w", err)
+		errChan <- fmt.Errorf("failed to read temp directory: %w", err)
+		return
 	}
 
-	destDir := filepath.Join(DefaultDestPath, "decent/completed")
+	destDir := filepath.Join(DefaultDestPath, DestDir)
 	if err := os.MkdirAll(destDir, 0755); err != nil {
-		return fmt.Errorf("failed to create destination directory: %w", err)
+		errChan <- fmt.Errorf("failed to create destination directory: %w", err)
 	}
 
 	outPath := filepath.Join(destDir, f.FileName)
 	outFile, err := os.Create(outPath)
 	if err != nil {
-		return fmt.Errorf("failed to create output file: %w", err)
+		errChan <- fmt.Errorf("failed to create output file: %w", err)
 	}
 	defer outFile.Close()
 
 	start := time.Now()
-	for _, file := range files {
+	for i, file := range files {
 		chunkPath := filepath.Join(tempDir, file.Name())
 		chunkFile, err := os.Open(chunkPath)
 		if err != nil {
-			return fmt.Errorf("failed to open chunk file %s: %w", file.Name(), err)
+			errChan <- fmt.Errorf("failed to open chunk file %s: %w", file.Name(), err)
 		}
-
+		chunkFileInfo, err := chunkFile.Stat()
+		if err != nil {
+			errChan <- fmt.Errorf("failed to get chunk file stats: %w", err)
+		}
+		chunk := make([]byte, int(chunkFileInfo.Size()))
+		_, err = chunkFile.Read(chunk)
+		f.VerifyPieceHash(chunk, i)
 		_, err = io.Copy(outFile, chunkFile)
 		chunkFile.Close()
 		if err != nil {
-			return fmt.Errorf("failed to write chunk %s: %w", file.Name(), err)
+			errChan <- fmt.Errorf("failed to write chunk %s: %w", file.Name(), err)
 		}
 	}
 
 	isValid := f.VerifyHash()
 	if !isValid {
-		return fmt.Errorf("failed to verify merged file: %w", err)
+		errChan <- fmt.Errorf("failed to verify merged file")
 	}
-
-	fmt.Println("merged hash: ", f.Hash)
+	fmt.Println()
+	fmt.Println("merged file hash: ", f.Hash)
+	fmt.Println()
 	fmt.Printf("File merge completed in %v\n", time.Since(start))
-	err = f.DeleteTempFiles()
-	return err
+	f.DeleteTempFiles(errChan)
 }
 
 func (f *File) CalculateHash() {
 	hash := sha1.Sum([]byte(f.FileName + strconv.Itoa(f.Pieces) + strconv.Itoa(int(f.FileSize))))
-	f.Hash = fmt.Sprintf("%x", hash)
+	f.Hash = hash
 }
 
 func (f *File) VerifyHash() bool {
 	hash := sha1.Sum([]byte(f.FileName + strconv.Itoa(f.Pieces) + strconv.Itoa(int(f.FileSize))))
-	if fmt.Sprintf("%x", hash) == f.Hash {
+	if hash == f.Hash {
 		return true
 	}
-	fmt.Println("Verifying hash for:", f.FileName)
 	return false
 }
 
-func (f *File) CalculatePieceHash(piece []byte) string {
-	hash := sha1.Sum(piece)
-	return fmt.Sprintf("%x", hash)
+func (f *File) CalculatePieceHash(piece []byte, index int) {
+	hashInput := []byte(f.FileName + strconv.Itoa(index))
+	hash := sha1.Sum(append(hashInput, piece...))
+	f.PieceHash[index] = hash
 }
 
-func (f *File) DeleteTempFiles() error {
-	tempDir := filepath.Join(TempDst, "decent")
+func (f *File) VerifyPieceHash(piece []byte, index int) bool {
+	hashInput := []byte(f.FileName + strconv.Itoa(index))
+	hash := sha1.Sum(append(hashInput, piece...))
+	fmt.Printf("final piece hash: %d , index %v\n", hash, index)
+	if hash == f.PieceHash[index] {
+		return true
+	}
+	return false
+}
+
+func (f *File) DeleteTempFiles(errChan chan error) {
 	files, err := os.ReadDir(tempDir)
 	if err != nil {
-		return fmt.Errorf("failed to read temp directory: %w", err)
+		errChan <- fmt.Errorf("failed to read temp directory: %w", err)
 	}
 
-	var errChan = make(chan error, len(files))
 	var wg sync.WaitGroup
 	for _, file := range files {
 		wg.Add(1)
@@ -247,13 +264,8 @@ func (f *File) DeleteTempFiles() error {
 		}(file)
 	}
 	wg.Wait()
-	close(errChan)
 
-	if len(errChan) > 0 {
-		return <-errChan
-	}
 	fmt.Println("Deleted temp files successfully")
-	return nil
 }
 
 func (f *File) ReadChunk(chunkIndex int) ([]byte, error) {

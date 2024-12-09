@@ -18,12 +18,9 @@ V5: File encryption
 package main
 
 import (
-	"context"
 	"log"
 	"p2p/file"
-	"p2p/network"
 	"sync"
-	"time"
 )
 
 func main() {
@@ -37,35 +34,50 @@ func ExampleUsage() {
 	if err != nil {
 		log.Panicln("error creating a new file: ", err)
 	}
+
+	errChan := make(chan error, newFile.Pieces)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		newFile.Chunkify()
-		newFile.Merge(file.TempDst)
+		newFile.Chunkify(errChan)
+		if err != nil {
+			log.Panicln("error chunkifying file: ", err)
+		}
+		newFile.Merge(file.TempDst, errChan)
+		if err != nil {
+			log.Println("error merging file: ", err)
+		}
 	}()
-
-	ctx := context.Background()
-	cfg := network.PeerConfig{
-		Host:              "192.168.0.212",
-		Port:              8080,
-		MaxConnections:    50,
-		ConnectionTimeout: 30 * time.Second,
-		BlockSize:         16384,
-	}
-
-	peer := network.New(cfg, newFile, network.TypeSeeder)
-
-	if err := peer.Start(ctx); err != nil {
-		log.Fatalf("Failed to start peer: %v", err)
-	}
-
-	_, err = peer.ConnectToPeer(ctx, "192.168.0.212.:8080")
-	if err != nil {
-		log.Printf("Failed to connect to peer: %v", err)
-		return
-	}
-
-	stats := peer.GetPeerStats()
-	log.Printf("Peer stats: %+v", stats)
 	wg.Wait()
+	if len(errChan) > 0 {
+		for range errChan {
+			log.Println("error: ", <-errChan)
+		}
+	}
+	close(errChan)
+
+	// ctx := context.Background()
+	// cfg := network.PeerConfig{
+	// 	Host:              "192.168.29.119",
+	// 	Port:              8080,
+	// 	MaxConnections:    50,
+	// 	ConnectionTimeout: 30 * time.Second,
+	// 	BlockSize:         16384,
+	// }
+
+	// peer := network.New(cfg, newFile, network.TypeSeeder)
+
+	// if err := peer.Start(ctx); err != nil {
+	// 	log.Fatalf("Failed to start peer: %v", err)
+	// }
+
+	// _, err = peer.ConnectToPeer(ctx, "192.168.29.119.:8080")
+	// if err != nil {
+	// 	log.Printf("Failed to connect to peer: %v", err)
+	// 	return
+	// }
+
+	// stats := peer.GetPeerStats()
+	// log.Printf("Peer stats: %+v", stats)
+
 }
