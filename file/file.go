@@ -1,20 +1,23 @@
 package file
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"time"
 )
 
 type File struct {
-	FileName string
-	FilePath string // Absolute path
-	FileSize int64  // Size in bytes
-	Pieces   int    // Number of pieces
-	Hash     string // File hash for verification
+	FileName  string
+	FilePath  string // Absolute path
+	FileSize  int64  // Size in bytes
+	Pieces    int    // Number of pieces
+	Hash      string // File hash for verification
+	PieceHash []string
 }
 
 const (
@@ -33,8 +36,8 @@ type FileInterface interface {
 
 	Chunkify() error
 	Merge(tempDst string) error
-	CalculateHash() (string, error)
-	VerifyHash() (bool, error)
+	CalculateHash()
+	VerifyHash() bool
 	DeleteTempFiles() error
 	ReadChunk(chunkIndex int) ([]byte, error)
 }
@@ -58,12 +61,9 @@ func NewFile(filePath string) (*File, error) {
 	}
 	file.FileSize = size
 	file.Pieces = file.pieceCount()
+	// file.PieceHash =
 
-	hash, err := file.CalculateHash()
-	if err != nil {
-		return nil, fmt.Errorf("failed to calculate file hash: %w", err)
-	}
-	file.Hash = hash
+	file.CalculateHash()
 
 	return file, nil
 }
@@ -157,8 +157,9 @@ func (f *File) Chunkify() error {
 
 	if len(errChan) > 0 {
 		return <-errChan
-	}
-
+	}	
+	f.CalculateHash()
+	fmt.Println("initial hash: ", f.Hash)
 	return nil
 }
 
@@ -196,30 +197,34 @@ func (f *File) Merge(tempDst string) error {
 		}
 	}
 
-	mergedHash, err := f.CalculateHash()
-	if err != nil {
+	isValid := f.VerifyHash()
+	if !isValid {
 		return fmt.Errorf("failed to verify merged file: %w", err)
 	}
 
-	if mergedHash != f.Hash {
-		return fmt.Errorf("file verification failed: hash mismatch")
-	}
-
+	fmt.Println("merged hash: ", f.Hash)
 	fmt.Printf("File merge completed in %v\n", time.Since(start))
 	err = f.DeleteTempFiles()
 	return err
 }
 
-func (f *File) CalculateHash() (string, error) {
-	// TODO: Implement file hash calculation
-	fmt.Println("Calculating hash for:", f.FilePath)
-	return "placeholder-hash", nil
+func (f *File) CalculateHash() {
+	hash := sha1.Sum([]byte(f.FileName + strconv.Itoa(f.Pieces) + strconv.Itoa(int(f.FileSize))))
+	f.Hash = fmt.Sprintf("%x", hash)
 }
 
-func (f *File) VerifyHash() (bool, error) {
-	// TODO: Implement file hash verification
-	fmt.Println("Verifying hash for:", f.FilePath)
-	return true, nil
+func (f *File) VerifyHash() bool {
+	hash := sha1.Sum([]byte(f.FileName + strconv.Itoa(f.Pieces) + strconv.Itoa(int(f.FileSize))))
+	if fmt.Sprintf("%x", hash) == f.Hash {
+		return true
+	}
+	fmt.Println("Verifying hash for:", f.FileName)
+	return false
+}
+
+func (f *File) CalculatePieceHash(piece []byte) string {
+	hash := sha1.Sum(piece)
+	return fmt.Sprintf("%x", hash)
 }
 
 func (f *File) DeleteTempFiles() error {

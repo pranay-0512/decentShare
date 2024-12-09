@@ -161,6 +161,7 @@ func New(cfg PeerConfig, f *file.File, peerType PeerType) *Peer {
 }
 
 func (p *Peer) Start(ctx context.Context) error {
+	// DO NAT TRAVERSALS FOR TCP CONNECTION
 	go p.connectionManager(ctx)
 
 	if err := p.startListener(ctx); err != nil {
