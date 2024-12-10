@@ -14,11 +14,11 @@ import (
 
 type File struct {
 	FileName  string
-	FilePath  string   // Absolute path
-	FileSize  int64    // Size in bytes
-	Pieces    int      // Number of pieces
-	Hash      [20]byte // File hash for verification
-	PieceHash [][20]byte
+	FilePath  string     // Absolute path
+	FileSize  int64      // Size in bytes
+	Pieces    int        // Number of pieces
+	Hash      [20]byte   // File hash for verification
+	PieceHash [][20]byte // Piece hashes for verification
 }
 
 const (
@@ -27,8 +27,8 @@ const (
 
 var (
 	DefaultDestPath = config.GetDestPath()
-	tempDir         = filepath.Join(TempDst, "decent")
 	TempDst         = os.TempDir()
+	tempDir         = filepath.Join(TempDst, "decent")
 )
 
 type FileInterface interface {
@@ -136,17 +136,21 @@ func (f *File) Chunkify(errChan chan error) {
 
 			chunk := make([]byte, PieceSize)
 			offset := int64(i * PieceSize)
-			_, err = file.ReadAt(chunk, offset)
-			f.CalculatePieceHash(chunk, i)
-			if err != nil && err != io.EOF {
-				errChan <- fmt.Errorf("error reading chunk %d: %w", i, err)
-				return
-			}
 
 			if i == f.Pieces-1 && f.FileSize%PieceSize != 0 {
 				lastPieceSize := f.FileSize % PieceSize
 				chunk = chunk[:lastPieceSize]
 			}
+
+			n, err := file.ReadAt(chunk, offset)
+			if err != nil && err != io.EOF {
+				errChan <- fmt.Errorf("error reading chunk %d: %w", i, err)
+				return
+			}
+			fmt.Println("chunk size: ", len(chunk))
+			fmt.Println("read bytes: ", n)
+
+			f.CalculatePieceHash(chunk, i)
 
 			if _, err := chunkFile.Write(chunk); err != nil {
 				errChan <- fmt.Errorf("failed to write chunk %d: %w", i, err)
@@ -157,6 +161,11 @@ func (f *File) Chunkify(errChan chan error) {
 	wg.Wait()
 
 	f.CalculateHash()
+	if len(errChan) > 0 {
+		for range errChan {
+			fmt.Println("error: ", <-errChan)
+		}
+	}
 	fmt.Println("initial file hash: ", f.Hash)
 	fmt.Println()
 	for i := range f.GetPieceCount() {
@@ -196,10 +205,14 @@ func (f *File) Merge(tempDst string, errChan chan error) {
 			errChan <- fmt.Errorf("failed to get chunk file stats: %w", err)
 		}
 		chunk := make([]byte, int(chunkFileInfo.Size()))
-		_, err = chunkFile.Read(chunk)
+		n, err := chunkFile.Read(chunk)
 		f.VerifyPieceHash(chunk, i)
 		_, err = io.Copy(outFile, chunkFile)
 		chunkFile.Close()
+		fmt.Println("piece index: ", i)
+		fmt.Println("chunk size: ", len(chunk))
+		fmt.Println("read bytes: ", n)
+		fmt.Println()
 		if err != nil {
 			errChan <- fmt.Errorf("failed to write chunk %s: %w", file.Name(), err)
 		}
@@ -231,19 +244,14 @@ func (f *File) VerifyHash() bool {
 }
 
 func (f *File) CalculatePieceHash(piece []byte, index int) {
-	hashInput := []byte(f.FileName + strconv.Itoa(index))
-	hash := sha1.Sum(append(hashInput, piece...))
+	hash := sha1.Sum(piece)
 	f.PieceHash[index] = hash
 }
 
 func (f *File) VerifyPieceHash(piece []byte, index int) bool {
-	hashInput := []byte(f.FileName + strconv.Itoa(index))
-	hash := sha1.Sum(append(hashInput, piece...))
-	fmt.Printf("final piece hash: %d , index %v\n", hash, index)
-	if hash == f.PieceHash[index] {
-		return true
-	}
-	return false
+	hash := sha1.Sum(piece)
+	fmt.Println("piece hash: ", hash)
+	return hash == f.PieceHash[index]
 }
 
 func (f *File) DeleteTempFiles(errChan chan error) {

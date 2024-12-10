@@ -60,36 +60,31 @@ func ExampleUsage() {
 		newFile.Merge(file.TempDst, errChan)
 	}()
 	wg.Wait()
-	if len(errChan) > 0 {
-		for range errChan {
-			log.Println("error: ", <-errChan)
-		}
-	}
 	close(errChan)
 	fmt.Println("File saved at: ", config.GetDestPath())
 
-	// ctx := context.Background()
-	// cfg := network.PeerConfig{
-	// 	Host:              "192.168.29.119",
-	// 	Port:              8080,
-	// 	MaxConnections:    50,
-	// 	ConnectionTimeout: 30 * time.Second,
-	// 	BlockSize:         16384,
-	// }
+	ctx := context.Background()
+	cfg := network.PeerConfig{
+		Host:              "192.168.29.119",
+		Port:              8080,
+		MaxConnections:    50,
+		ConnectionTimeout: 30 * time.Second,
+		BlockSize:         16384,
+	}
 
-	// peer := network.New(cfg, newFile, network.TypeSeeder)
+	peer := network.New(cfg, newFile, network.TypeSeeder)
 
-	// if err := peer.Start(ctx); err != nil {
-	// 	log.Fatalf("Failed to start peer: %v", err)
-	// }
+	if err := peer.Start(ctx); err != nil {
+		log.Fatalf("Failed to start peer: %v", err)
+	}
 
-	// _, err = peer.ConnectToPeer(ctx, "192.168.29.119.:8080")
-	// if err != nil {
-	// 	log.Printf("Failed to connect to peer: %v", err)
-	// 	return
-	// }
+	_, err = peer.ConnectToPeer(ctx, "192.168.29.119.:8080")
+	if err != nil {
+		log.Printf("Failed to connect to peer: %v", err)
+		return
+	}
 
-	// stats := peer.GetPeerStats()
-	// log.Printf("Peer stats: %+v", stats)
+	stats := peer.GetPeerStats()
+	log.Printf("Peer stats: %+v", stats)
 
 }
